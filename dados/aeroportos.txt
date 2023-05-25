@@ -1,0 +1,14 @@
+GRU,Guarulhos,São Paulo,Brasil
+JFK,John F. Kennedy,New York,Estados Unidos
+EZE,Ministro Pistarini,Buenos Aires,Argentina
+DUB,Terminal 2,Dublin,Irlanda
+SYD,Sydney,Sydney,Austrália
+LAX,Los Angeles,Los Angeles,Estados Unidos
+DXB,Dubai,Dubai,Emirados Árabes Unidos
+LHR,Heathrow,London,Reino Unido
+MAD,Barajas,Madrid,Espanha
+CDG,Charles de Gaulle,Paris,França
+HND,Haneda,Tokyo,Japão
+AKL,Auckland,Auckland,Nova Zelândia
+SIN,Changi,Singapore,Cingapura
+MEL,Tullamarine,Melbourne,Austrália
