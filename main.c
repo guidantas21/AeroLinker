@@ -4,8 +4,8 @@
 #include <string.h>
 
 // Endereco para dados
-#define AEROPORTOS_FILE "dados/aeroportos.txt"
-#define CONEXOES_FILE "dados/conexoes.txt"
+#define AEROPORTOS_FILE "dados/aeroportos.csv"
+#define CONEXOES_FILE "dados/conexoes.csv"
 // Config
 #define DEBUG true
 
