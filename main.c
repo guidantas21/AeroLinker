@@ -17,13 +17,13 @@ typedef struct {
 } tAeroporto;
 
 typedef struct {
-    tAeroporto inicial;
-    tAeroporto final;
-    unsigned int distanciaKM;
+    tAeroporto *inicial;
+    tAeroporto *final;
+    unsigned int distanciaKm;
 } tConexao;
 
 bool iniciarArquivo(char endereco[]) {
-    if (DEBUG) printf("Abrindo '%s'\n", endereco);
+    if (DEBUG) printf("Abrindo '%s' para gravação\n", endereco);
 
     // Se o arquivo não existir, será criado
     FILE *fptr = fopen(endereco, "a");
@@ -105,30 +105,32 @@ void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
     printf("\n");
 }
 
-void destruirAeroportos(tAeroporto *aeroportos, unsigned int *numAeroportos) {
+void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
     if (DEBUG) printf("Liberando memória alocada do vetor de aeroportos\n");
 
     // Libera memória locada para o vetor
+    free(*aeroportos);
     *numAeroportos = 0;
-    free(aeroportos);
-    aeroportos = NULL;
+    *aeroportos = NULL;
 }
 
-tAeroporto acharAeroportoPorSigla(char sigla[4], tAeroporto *aeroportos, unsigned numAeroportos) {
+tAeroporto *acharAeroportoPorSigla(char sigla[4], tAeroporto *aeroportos, unsigned numAeroportos) {
     for (int i = 0; i < numAeroportos; i++) {
-        if (!strcmp(aeroportos[i].sigla, sigla)) {
+        if (!strcmp(aeroportos[i].sigla, sigla) ) {
             if (DEBUG) {
                 printf("Aeroporto de sigla '%s' encontrado: ", sigla);
                 printf("{ sigla: %s, nome: %s, cidade: %s, pais: %s }\n", 
                     aeroportos[i].sigla, 
                     aeroportos[i].nome, 
                     aeroportos[i].cidade, 
-                    aeroportos[i].pais);
+                    aeroportos[i].pais
+                );
             }
-            return aeroportos[i];
+            return &aeroportos[i];
         }
     }
     if (DEBUG) printf("Aeroporto de sigla '%s' não encontrado\n", sigla);
+    return NULL;
 }
 
 tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numConexoes) {
@@ -153,12 +155,32 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     int index = 0;
     char siglaInicial[4];
     char siglaFinal[4];
-    unsigned int distanciaKM;
+    unsigned int distanciaKm;
 
-    while (fscanf(fptr,"%[^,],%[^,],%d\n", siglaInicial, siglaFinal, &distanciaKM) == 3) {
+    while (fscanf(fptr,"%[^,],%[^,],%d\n", siglaInicial, siglaFinal, &distanciaKm) == 3) {
         conexoes[index].inicial = acharAeroportoPorSigla(siglaInicial, aeroportos, numAeroportos);
+
+        if (conexoes[index].inicial == NULL) {
+            if (DEBUG) printf("Aeroporto inicial inexistente\n");
+            return NULL;
+        }
+
         conexoes[index].final = acharAeroportoPorSigla(siglaFinal, aeroportos, numAeroportos);
-        conexoes[index].distanciaKM = distanciaKM;
+
+        if (conexoes[index].inicial == NULL) {
+            if (DEBUG) printf("Aeroporto final inexistente\n");
+            return NULL;
+        }
+
+        conexoes[index].distanciaKm = distanciaKm;
+        if (DEBUG) {
+            printf("Conexão encontrada: ");
+            printf("{ inical.sigla: %s, final.sigla: %s, distanciaKm: %d }\n\n", 
+                conexoes[index].inicial->sigla, 
+                conexoes[index].final->sigla, 
+                conexoes[index].distanciaKm
+            );
+        }
         index++;
     }
 
@@ -172,19 +194,19 @@ void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
     printf("\n- Conexões cadastradas:\n");
     printf("| INÍCIO |  FIM\t | DISTÂNCIA (KM)  |\n");
     for (int i = 0; i < numConexoes; i++) {
-        printf("|  %3s\t ", conexoes[i].inicial.sigla);
-        printf("|  %3s\t | \t", conexoes[i].final.sigla);
-        printf("%-*d |\n", 10, conexoes[i].distanciaKM);
+        printf("|  %3s\t ", conexoes[i].inicial->sigla);
+        printf("|  %3s\t | \t", conexoes[i].final->sigla);
+        printf("%-*d |\n", 10, conexoes[i].distanciaKm);
     }
     printf("\n");
 }
 
-void destruirConexoes(tConexao *conexoes, unsigned int *numConexoes) {
+void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes) {
     if (DEBUG) printf("Liberando memória alocada do vetor de conexões\n");
 
-    free(conexoes);
+    free(*conexoes);
     *numConexoes = 0;
-    conexoes = NULL;
+    *conexoes = NULL;
 }
 
 int main() {
@@ -194,7 +216,6 @@ int main() {
     tConexao *conexoes;
     unsigned int numConexoes = 0;
 
-    // 
     iniciarArquivo(AEROPORTOS_FILE);
     iniciarArquivo(CONEXOES_FILE);
 
@@ -207,8 +228,8 @@ int main() {
     printConexoes(conexoes, numConexoes);
 
     // Desalocar memória
-    destruirAeroportos(aeroportos, &numAeroportos);
-    destruirConexoes(conexoes, &numConexoes);
+    destruirConexoes(&conexoes, &numConexoes);
+    destruirAeroportos(&aeroportos, &numAeroportos);
 
     return 0;
 }
