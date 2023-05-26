@@ -33,8 +33,9 @@ bool iniciarArquivo(char endereco[]) {
         return false;
     }
 
-    if (DEBUG) printf("Arquivo '%s' aberto com sucesso\n", endereco);
+    if (DEBUG) printf("Arquivo '%s' iniciado com sucesso\n", endereco);
 
+    if (DEBUG) printf("Fechando o arquivo '%s'\n", endereco);
     fclose(fptr);
 
     return true;
@@ -86,18 +87,22 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
         index++;
     }
 
+    if (DEBUG) printf("Fechando o arquivo '%s'\n", AEROPORTOS_FILE);
     fclose(fptr);
 
     return aeroportos;
 }
 
 void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
+    printf("\n- Aeroportos cadastrados:\n");
+    printf("| SIGLA  | \tAEROPORTO\t\t\t | \tCIDADE\t\t\t\t | \tPAÍS\t\t\t\t |\n");
     for (int i = 0; i < numAeroportos; i++) {
         printf("|  %3s\t | \t", aeroportos[i].sigla);
         printf("%-*s\t | \t",  25, aeroportos[i].nome);
         printf("%-*s\t | \t", 25, aeroportos[i].cidade);
-        printf("%-*s\n", 25, aeroportos[i].pais);
+        printf("%-*s\t |\n", 25, aeroportos[i].pais);
     }
+    printf("\n");
 }
 
 void destruirAeroportos(tAeroporto *aeroportos, unsigned int *numAeroportos) {
@@ -112,7 +117,14 @@ void destruirAeroportos(tAeroporto *aeroportos, unsigned int *numAeroportos) {
 tAeroporto acharAeroportoPorSigla(char sigla[4], tAeroporto *aeroportos, unsigned numAeroportos) {
     for (int i = 0; i < numAeroportos; i++) {
         if (!strcmp(aeroportos[i].sigla, sigla)) {
-            if (DEBUG) printf("Aeroporto de sigla '%s' encontrado\n", sigla);
+            if (DEBUG) {
+                printf("Aeroporto de sigla '%s' encontrado: ", sigla);
+                printf("{ sigla: %s, nome: %s, cidade: %s, pais: %s }\n", 
+                    aeroportos[i].sigla, 
+                    aeroportos[i].nome, 
+                    aeroportos[i].cidade, 
+                    aeroportos[i].pais);
+            }
             return aeroportos[i];
         }
     }
@@ -151,16 +163,20 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     }
 
     fclose(fptr);
+    if (DEBUG) printf("Fechando o arquivo '%s'\n", CONEXOES_FILE);
 
     return conexoes;
 }
 
 void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
+    printf("\n- Conexões cadastradas:\n");
+    printf("| INÍCIO |  FIM\t | DISTÂNCIA (KM)  |\n");
     for (int i = 0; i < numConexoes; i++) {
-        printf("|  %3s\t | \t", conexoes[i].inicial.sigla);
+        printf("|  %3s\t ", conexoes[i].inicial.sigla);
         printf("|  %3s\t | \t", conexoes[i].final.sigla);
         printf("%-*d |\n", 10, conexoes[i].distanciaKM);
     }
+    printf("\n");
 }
 
 void destruirConexoes(tConexao *conexoes, unsigned int *numConexoes) {
@@ -178,17 +194,19 @@ int main() {
     tConexao *conexoes;
     unsigned int numConexoes = 0;
 
+    // 
     iniciarArquivo(AEROPORTOS_FILE);
     iniciarArquivo(CONEXOES_FILE);
 
+    // Gerar lista de aeroportos e conexões a partir de dados dos arquivos
     aeroportos = lerDadosAeroportos(&numAeroportos);
     conexoes = lerDadosConexoes(aeroportos, numAeroportos, &numConexoes);
 
-    printf("\nAeroportos cadastrados:\n");
+    // Print tabelas de dados de aeroportos e conexões
     printAeroportos(aeroportos, numAeroportos);
-    printf("\nConexoes cadastradas:\n");
     printConexoes(conexoes, numConexoes);
 
+    // Desalocar memória
     destruirAeroportos(aeroportos, &numAeroportos);
     destruirConexoes(conexoes, &numConexoes);
 
