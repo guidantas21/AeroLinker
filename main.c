@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 // Endereco para dados
 #define AEROPORTOS_FILE "dados/aeroportos.csv"
@@ -173,9 +174,10 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
         }
 
         conexoes[index].distanciaKm = distanciaKm;
+        
         if (DEBUG) {
             printf("Conexão encontrada: ");
-            printf("{ inical.sigla: %s, final.sigla: %s, distanciaKm: %d }\n\n", 
+            printf("{ inicial.sigla: %s, final.sigla: %s, distanciaKm: %d }\n\n", 
                 conexoes[index].inicial->sigla, 
                 conexoes[index].final->sigla, 
                 conexoes[index].distanciaKm
