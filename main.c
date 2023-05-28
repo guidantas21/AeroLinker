@@ -4,9 +4,19 @@
 #include <string.h>
 #include <assert.h>
 
+#ifdef _WIN32
+    #define COMANDO_MAPA_PYTHON "python mapas/mapas.py"
+    // const char* comando = "python arquivo.py";  // Comando para Windows
+#else
+    // const char* comando = "python3 arquivo.py"; // Comando para Linux e macOS
+    #define COMANDO_MAPA_PYTHON "python3 mapas/mapas.py"
+#endif
+
 // Endereco para dados
 #define AEROPORTOS_FILE "dados/aeroportos.csv"
+// #define AEROPORTOS_FILE "C:\\dados\\aeroportos.csv"
 #define CONEXOES_FILE "dados/conexoes.csv"
+// #define CONEXOES_FILE "C:\\dados\\conexoes.csv"
 // Config
 #define DEBUG true
 
@@ -435,7 +445,11 @@ int main() {
 
     printArestas(aeroportos, numAeroportos);
 
-
+    if (getenv("WSL_DISTRO_NAME") == NULL) {
+        system(COMANDO_MAPA_PYTHON);
+    } else {
+        printf("Está sendo executado no Windows Subsystem for Linux (WSL).\n");
+    }
     // Desalocar memória
     destruirConexoes(&dadosConexoes, &numConexoes);
     destruirAeroportos(&dadosAeroportos, &numAeroportos);
