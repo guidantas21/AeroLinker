@@ -1,14 +1,14 @@
-GRU,Guarulhos,São Paulo,Brasil
-JFK,John F. Kennedy,New York,Estados Unidos
-EZE,Ministro Pistarini,Buenos Aires,Argentina
-DUB,Terminal 2,Dublin,Irlanda
-SYD,Sydney,Sydney,Austrália
-LAX,Los Angeles,Los Angeles,Estados Unidos
-DXB,Dubai,Dubai,Emirados Árabes Unidos
-LHR,Heathrow,London,Reino Unido
-MAD,Barajas,Madrid,Espanha
-CDG,Charles de Gaulle,Paris,França
-HND,Haneda,Tokyo,Japão
-AKL,Auckland,Auckland,Nova Zelândia
-SIN,Changi,Singapore,Cingapura
-MEL,Tullamarine,Melbourne,Austrália
+GRU,Guarulhos,São Paulo,Brasil,-23.4346,-46.4732
+JFK,John F. Kennedy,New York,Estados Unidos,40.6413,-73.7781
+EZE,Ministro Pistarini,Buenos Aires,Argentina,-34.8129,-58.5398
+DUB,Terminal 2,Dublin,Irlanda,53.4264,-6.2499
+SYD,Sydney,Sydney,Austrália,-33.9461,151.1772
+LAX,Los Angeles,Los Angeles,Estados Unidos,33.9416,-118.4085
+DXB,Dubai,Dubai,Emirados Árabes Unidos,25.2532,55.3657
+LHR,Heathrow,London,Reino Unido,51.4700,-0.4543
+MAD,Barajas,Madrid,Espanha,40.4981,-3.5678
+CDG,Charles de Gaulle,Paris,França,49.0097,2.5479
+HND,Haneda,Tokyo,Japão,35.5533,139.7810
+AKL,Auckland,Auckland,Nova Zelândia,-37.0082,174.7850
+SIN,Changi,Singapore,Cingapura,1.3644,103.9915
+MEL,Tullamarine,Melbourne,Austrália,-37.6735,144.8435

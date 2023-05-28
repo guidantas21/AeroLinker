@@ -11,10 +11,12 @@
 #define DEBUG true
 
 typedef struct {
-    char sigla[4];
+    char iata[4];
     char nome[50];
-    char cidade[50];
+    char local[50];
     char pais[50];
+    float latitude;
+    float longitude;
 } tAeroporto;
 
 typedef struct {
@@ -80,11 +82,13 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
 
     // Pega as informações de cada aeroporto e cria um tAeroporto com elas
     int index = 0;
-    while (fscanf(fptr,"%[^,],%[^,],%[^,],%[^\n]\n", 
-        aeroportos[index].sigla, 
+    while (fscanf(fptr,"%[^,],%[^,],%[^,],%[^,],%f,%f\n", 
+        aeroportos[index].iata, 
         aeroportos[index].nome, 
-        aeroportos[index].cidade, 
-        aeroportos[index].pais) == 4) {
+        aeroportos[index].local, 
+        aeroportos[index].pais,
+        &aeroportos[index].latitude,
+        &aeroportos[index].longitude) == 6) {
         index++;
     }
 
@@ -96,12 +100,14 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
 
 void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
     printf("\n- Aeroportos cadastrados:\n");
-    printf("| SIGLA  | \tAEROPORTO\t\t\t | \tCIDADE\t\t\t\t | \tPAÍS\t\t\t\t |\n");
+    printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t\t | LATITUDE\t| LONGITUDE    |\n");
     for (int i = 0; i < numAeroportos; i++) {
-        printf("|  %3s\t | \t", aeroportos[i].sigla);
-        printf("%-*s\t | \t",  25, aeroportos[i].nome);
-        printf("%-*s\t | \t", 25, aeroportos[i].cidade);
-        printf("%-*s\t |\n", 25, aeroportos[i].pais);
+        printf("| %3s\t| ", aeroportos[i].iata);
+        printf("%-*s\t | ",  25, aeroportos[i].nome);
+        printf("%-*s\t | ", 25, aeroportos[i].local);
+        printf("%-*s\t | ", 25, aeroportos[i].pais);
+        printf("%-*f | ", 12, aeroportos[i].latitude);
+        printf("%-*f |\n", 12, aeroportos[i].longitude);
     }
     printf("\n");
 }
@@ -115,22 +121,24 @@ void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
     *aeroportos = NULL;
 }
 
-tAeroporto *acharAeroportoPorSigla(char sigla[4], tAeroporto *aeroportos, unsigned numAeroportos) {
+tAeroporto *acharAeroportoPorIata(char iata[4], tAeroporto *aeroportos, unsigned numAeroportos) {
     for (int i = 0; i < numAeroportos; i++) {
-        if (!strcmp(aeroportos[i].sigla, sigla) ) {
+        if (!strcmp(aeroportos[i].iata, iata) ) {
             if (DEBUG) {
-                printf("Aeroporto de sigla '%s' encontrado: ", sigla);
-                printf("{ sigla: %s, nome: %s, cidade: %s, pais: %s }\n", 
-                    aeroportos[i].sigla, 
+                printf("Aeroporto de IATA '%s' encontrado: ", iata);
+                printf("{ iata: %s, nome: %s, local: %s, pais: %s, latitude: %f, longitude: %f }\n", 
+                    aeroportos[i].iata, 
                     aeroportos[i].nome, 
-                    aeroportos[i].cidade, 
-                    aeroportos[i].pais
+                    aeroportos[i].local, 
+                    aeroportos[i].pais,
+                    aeroportos[i].latitude,
+                    aeroportos[i].longitude
                 );
             }
             return &aeroportos[i];
         }
     }
-    if (DEBUG) printf("Aeroporto de sigla '%s' não encontrado\n", sigla);
+    if (DEBUG) printf("Aeroporto de IATA '%s' não encontrado\n", iata);
     return NULL;
 }
 
@@ -154,21 +162,21 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     }
 
     int index = 0;
-    char siglaInicial[4];
-    char siglaFinal[4];
+    char iataInicial[4];
+    char iataFinal[4];
     unsigned int distanciaKm;
 
-    while (fscanf(fptr,"%[^,],%[^,],%d\n", siglaInicial, siglaFinal, &distanciaKm) == 3) {
-        conexoes[index].inicial = acharAeroportoPorSigla(siglaInicial, aeroportos, numAeroportos);
+    while (fscanf(fptr,"%[^,],%[^,],%d\n", iataInicial, iataFinal, &distanciaKm) == 3) {
+        conexoes[index].inicial = acharAeroportoPorIata(iataInicial, aeroportos, numAeroportos);
 
         if (conexoes[index].inicial == NULL) {
             if (DEBUG) printf("Aeroporto inicial inexistente\n");
             return NULL;
         }
 
-        conexoes[index].final = acharAeroportoPorSigla(siglaFinal, aeroportos, numAeroportos);
+        conexoes[index].final = acharAeroportoPorIata(iataFinal, aeroportos, numAeroportos);
 
-        if (conexoes[index].inicial == NULL) {
+        if (conexoes[index].final == NULL) {
             if (DEBUG) printf("Aeroporto final inexistente\n");
             return NULL;
         }
@@ -177,9 +185,9 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
         
         if (DEBUG) {
             printf("Conexão encontrada: ");
-            printf("{ inicial.sigla: %s, final.sigla: %s, distanciaKm: %d }\n\n", 
-                conexoes[index].inicial->sigla, 
-                conexoes[index].final->sigla, 
+            printf("{ inicial.iata: %s, final.iata: %s, distanciaKm: %d }\n\n", 
+                conexoes[index].inicial->iata, 
+                conexoes[index].final->iata, 
                 conexoes[index].distanciaKm
             );
         }
@@ -196,8 +204,8 @@ void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
     printf("\n- Conexões cadastradas:\n");
     printf("| INÍCIO |  FIM\t | DISTÂNCIA (KM)  |\n");
     for (int i = 0; i < numConexoes; i++) {
-        printf("|  %3s\t ", conexoes[i].inicial->sigla);
-        printf("|  %3s\t | \t", conexoes[i].final->sigla);
+        printf("|  %3s\t ", conexoes[i].inicial->iata);
+        printf("|  %3s\t | \t", conexoes[i].final->iata);
         printf("%-*d |\n", 10, conexoes[i].distanciaKm);
     }
     printf("\n");
