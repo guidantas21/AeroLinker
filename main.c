@@ -420,13 +420,27 @@ void passarConexoesParaGrafo(tGrafo *grafo, tConexao *dadosConexoes, int numCone
     }
 }
 
+void mostrarMapaRedeAerea() {
+    if (getenv("WSL_DISTRO_NAME") == NULL) {
+        system(COMANDO_MAPA_PYTHON);
+    } else {
+        printf("Está sendo executado no Windows Subsystem for Linux (WSL).\n");
+    }
+} 
+
 int main() {
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // SETUP ---------------------------------------------------------------------------------------------------
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Variáveis para aramzenar dados dos aeroportos e conexões
     tAeroporto *dadosAeroportos;
     unsigned int numAeroportos = 0;
 
     tConexao *dadosConexoes;
     unsigned int numConexoes = 0;
 
+    // Verifica arquivos de dados de aeroportos e conexões
     iniciarArquivo(AEROPORTOS_FILE);
     iniciarArquivo(CONEXOES_FILE);
 
@@ -434,26 +448,49 @@ int main() {
     dadosAeroportos = lerDadosAeroportos(&numAeroportos);
     dadosConexoes = lerDadosConexoes(dadosAeroportos, numAeroportos, &numConexoes);
 
-    // 
+    // Criar grafo vazio
     tGrafo *aeroportos = criarGrafo(numAeroportos);
 
+    // Passar dados pra o grafo
     passarConexoesParaGrafo(aeroportos, dadosConexoes, numConexoes, dadosAeroportos, numAeroportos);
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // LOOP DA APLICAÇÃO ---------------------------------------------------------------------------------------
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /*
+    TODO:
+    criar loop infinito
+    mostrar opcoes
+        1. printar dados dos aeroportos
+        2. printar dados das conexões
+        3. printar arestas
+        4. Mostrar mapa da rede aérea
+        0. Sair do prgrama (finaliza o loop da aplicação)
+    perguntar o que o usário quer
+    fazer o que o usário pedir (executar umas das funçoes disponíveis ou sair do programa)
+    */
 
     // Print tabelas de dados de aeroportos e conexões
     printAeroportos(dadosAeroportos, numAeroportos);
     printConexoes(dadosConexoes, numConexoes);
 
+    // Print matriz adjacente do grafo
     printArestas(aeroportos, numAeroportos);
 
-    if (getenv("WSL_DISTRO_NAME") == NULL) {
-        system(COMANDO_MAPA_PYTHON);
-    } else {
-        printf("Está sendo executado no Windows Subsystem for Linux (WSL).\n");
-    }
-    // Desalocar memória
+    // Mostrar mapa da rede aérea no navegador
+    mostrarMapaRedeAerea()
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // LIBERAÇÃO DE MEMÓRIA ------------------------------------------------------------------------------------
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // Desalocar memória alocada para armazenar dados de coexões e aeroportos
     destruirConexoes(&dadosConexoes, &numConexoes);
     destruirAeroportos(&dadosAeroportos, &numAeroportos);
-
+    // Desalocar memória alocada para armazenar o grafo 
     liberarGrafo(aeroportos);
 
     return 0;
