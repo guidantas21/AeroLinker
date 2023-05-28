@@ -77,8 +77,8 @@ for conexao in conexoes:
         ).add_to(m)
 
 # Salvar o mapa como um arquivo HTML
-m.save('mapa.html')
+m.save('mapas/mapa.html')
 
 # Exemplo de uso
-arquivo_html = os.path.realpath("mapa.html")
+arquivo_html = os.path.realpath("mapas/mapa.html")
 abrir_html_no_navegador(arquivo_html)
