@@ -480,7 +480,7 @@ int main() {
     printArestas(aeroportos, numAeroportos);
 
     // Mostrar mapa da rede aérea no navegador
-    mostrarMapaRedeAerea()
+    mostrarMapaRedeAerea();
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
