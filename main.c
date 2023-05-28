@@ -10,6 +10,34 @@
 // Config
 #define DEBUG true
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DEBUG ------------------------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void debugAbrirArquivo(char endereco[], char modo[]) {
+    if (DEBUG) printf("\nAbrindo '%s' no modo '%s'\n", endereco, modo);
+}
+
+void debugFecharArquivo(char endereco[]) {
+    if (DEBUG) printf("\nFechando o arquivo '%s'\n", endereco);
+}
+
+void debugIniciarArquivo(char endereco[]) {
+    if (DEBUG) printf("Arquivo '%s' iniciado com sucesso\n", endereco);
+}
+
+bool verificarArquivo(FILE *fptr, char endereco[]) {
+    if (fptr == NULL) {
+        if (DEBUG) printf("Erro ao abrir o arquivo '%s'\n", endereco);
+        return false;
+    }
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MANIPULAÇÂO DE DADOS ---------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef struct {
     char iata[4];
     char nome[50];
@@ -25,20 +53,31 @@ typedef struct {
     unsigned int distanciaKm;
 } tConexao;
 
+void debugAcharAeroporto(tAeroporto aeroporto, char iata[]) {
+    if (DEBUG) {
+        printf("Aeroporto de IATA '%s' encontrado: ", iata);
+        printf("{ iata: %s, nome: %s, local: %s, pais: %s, latitude: %f, longitude: %f }\n", 
+            aeroporto.iata, 
+            aeroporto.nome, 
+            aeroporto.local, 
+            aeroporto.pais,
+            aeroporto.latitude,
+            aeroporto.longitude
+        );
+    }
+}
+
 bool iniciarArquivo(char endereco[]) {
-    if (DEBUG) printf("Abrindo '%s' para gravação\n", endereco);
+    debugAbrirArquivo(endereco, "a");
 
     // Se o arquivo não existir, será criado
     FILE *fptr = fopen(endereco, "a");
 
-    if (fptr == NULL) {
-        if (DEBUG) printf("Erro ao abrir o arquivo '%s'\n", endereco);
-        return false;
-    }
+    if (!verificarArquivo(fptr, endereco)) return false;
 
-    if (DEBUG) printf("Arquivo '%s' iniciado com sucesso\n", endereco);
+    debugIniciarArquivo(endereco);
 
-    if (DEBUG) printf("Fechando o arquivo '%s'\n", endereco);
+    debugFecharArquivo(endereco);
     fclose(fptr);
 
     return true;
@@ -61,14 +100,11 @@ unsigned int contarLinhasDeArquivo(FILE *fptr) {
 }
 
 tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
-    if (DEBUG) printf("Abrindo '%s' para leitura\n", AEROPORTOS_FILE);
+    debugAbrirArquivo(AEROPORTOS_FILE, "r");
 
     FILE *fptr = fopen(AEROPORTOS_FILE, "r");
 
-    if (fptr == NULL) {
-        if (DEBUG) printf("Erro ao abrir o arquivo '%s'\n", AEROPORTOS_FILE);
-        return NULL;
-    }
+    if (!verificarArquivo(fptr, AEROPORTOS_FILE)) return NULL;
 
     // Quantidade de aeroportos listados no arquivo
     *numAeroportos = contarLinhasDeArquivo(fptr);
@@ -76,7 +112,7 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
     tAeroporto *aeroportos = (tAeroporto*) malloc((*numAeroportos) * sizeof(tAeroporto));
 
     if (aeroportos == NULL) {
-        if (DEBUG) printf("Erro ao alocar memória para o vetor de aeroportos '%s'\n", AEROPORTOS_FILE);
+        if (DEBUG) printf("Erro ao alocar memória para o vetor de aeroporto\n");
         return NULL;
     }
 
@@ -92,7 +128,7 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
         index++;
     }
 
-    if (DEBUG) printf("Fechando o arquivo '%s'\n", AEROPORTOS_FILE);
+    debugFecharArquivo(AEROPORTOS_FILE);
     fclose(fptr);
 
     return aeroportos;
@@ -121,20 +157,10 @@ void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
     *aeroportos = NULL;
 }
 
-tAeroporto *acharAeroportoPorIata(char iata[4], tAeroporto *aeroportos, unsigned numAeroportos) {
+tAeroporto *acharAeroportoPorIATA(char iata[4], tAeroporto *aeroportos, unsigned numAeroportos) {
     for (int i = 0; i < numAeroportos; i++) {
         if (!strcmp(aeroportos[i].iata, iata) ) {
-            if (DEBUG) {
-                printf("Aeroporto de IATA '%s' encontrado: ", iata);
-                printf("{ iata: %s, nome: %s, local: %s, pais: %s, latitude: %f, longitude: %f }\n", 
-                    aeroportos[i].iata, 
-                    aeroportos[i].nome, 
-                    aeroportos[i].local, 
-                    aeroportos[i].pais,
-                    aeroportos[i].latitude,
-                    aeroportos[i].longitude
-                );
-            }
+            debugAcharAeroporto(aeroportos[i], iata);
             return &aeroportos[i];
         }
     }
@@ -142,22 +168,31 @@ tAeroporto *acharAeroportoPorIata(char iata[4], tAeroporto *aeroportos, unsigned
     return NULL;
 }
 
+int idAerportoPorIATA(char iata[4], tAeroporto *aeroportos, unsigned numAeroportos) {
+    for (int i = 0; i < numAeroportos; i++) {
+        if (!strcmp(aeroportos[i].iata, iata) ) {
+            debugAcharAeroporto(aeroportos[i], iata);
+            if (DEBUG) printf("ID: %d\n", i);
+            return i;
+        }
+    }
+    if (DEBUG) printf("Aeroporto de IATA '%s' não encontrado\n", iata);
+    return -1;
+}
+
 tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numConexoes) {
-    if (DEBUG) printf("Abrindo '%s' para leitura\n", CONEXOES_FILE);
+    debugAbrirArquivo(CONEXOES_FILE, "r");
 
     FILE *fptr = fopen(CONEXOES_FILE, "r");
 
-    if (fptr == NULL) {
-        if (DEBUG) printf("Erro ao abrir o arquivo '%s'\n", CONEXOES_FILE);
-        return NULL;
-    }
+    if (!verificarArquivo(fptr, CONEXOES_FILE)) return NULL;
 
     *numConexoes = contarLinhasDeArquivo(fptr);
 
     tConexao *conexoes = (tConexao*) malloc((*numConexoes) * sizeof(tConexao));
 
     if (conexoes == NULL) {
-        if (DEBUG) printf("Erro ao alocar memória para o vetor de conexões '%s'\n", CONEXOES_FILE);
+        if (DEBUG) printf("Erro ao alocar memória para o vetor de conexões\n");
         return NULL;
     }
 
@@ -167,14 +202,14 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     unsigned int distanciaKm;
 
     while (fscanf(fptr,"%[^,],%[^,],%d\n", iataInicial, iataFinal, &distanciaKm) == 3) {
-        conexoes[index].inicial = acharAeroportoPorIata(iataInicial, aeroportos, numAeroportos);
+        conexoes[index].inicial = acharAeroportoPorIATA(iataInicial, aeroportos, numAeroportos);
 
         if (conexoes[index].inicial == NULL) {
             if (DEBUG) printf("Aeroporto inicial inexistente\n");
             return NULL;
         }
 
-        conexoes[index].final = acharAeroportoPorIata(iataFinal, aeroportos, numAeroportos);
+        conexoes[index].final = acharAeroportoPorIATA(iataFinal, aeroportos, numAeroportos);
 
         if (conexoes[index].final == NULL) {
             if (DEBUG) printf("Aeroporto final inexistente\n");
@@ -195,7 +230,7 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     }
 
     fclose(fptr);
-    if (DEBUG) printf("Fechando o arquivo '%s'\n", CONEXOES_FILE);
+    debugFecharArquivo(CONEXOES_FILE);
 
     return conexoes;
 }
@@ -219,27 +254,193 @@ void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes) {
     *conexoes = NULL;
 }
 
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GRAFOS -----------------------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct {
+    int distancia; // Distância entre dois vértices
+} tAresta;
+
+typedef struct {
+    tAresta **arestas; // Matriz adjacente representando as arestas
+    int numVertices; // Número de vértices no grafo
+} tGrafo;
+
+// Libera toda a memória alocada para o grafo
+void liberarGrafo(tGrafo *grafo) {
+    // Verifica se a matriz adjacente precisa ser liberada
+    if (grafo->arestas != NULL) {
+        for (int i = 0; i < grafo->numVertices; i++) {
+            // Libera memória de cada vetor da matriz adjacente que não seja nulo
+            if (grafo->arestas[i] != NULL) {
+                free(grafo->arestas[i]);
+                grafo->arestas[i] = NULL;
+            }
+        }
+        // Libera memória da matriz adjacente
+        free(grafo->arestas);
+        grafo->arestas = NULL;
+    }
+    // Libera memória do grafo
+    free(grafo);
+    grafo = NULL;
+}
+
+// Cria um novo grafo com o número especificado de vértices
+tGrafo *criarGrafo(int numVertices) {
+    assert(numVertices > 0); // Verifica se o número de vértices é maior que 0
+    
+    // Aloca memória para um novo grafo
+    tGrafo *novoGrafo = (tGrafo*) malloc(sizeof(tGrafo));
+
+    // Verifica alocação do novo grafo
+    if (novoGrafo == NULL) {
+        return NULL;
+    }
+
+    novoGrafo->numVertices = numVertices;
+    // Aloca memória para uma matriz adjacente de n vetores de arestas
+    novoGrafo->arestas = (tAresta**) malloc(numVertices * sizeof(tAresta*));
+
+    // Verifica alocação da matriz adjacente
+    if (novoGrafo->arestas == NULL) {
+        free(novoGrafo);
+        novoGrafo = NULL;
+        return NULL;
+    }
+
+    for (int i = 0; i < numVertices; i++) {
+        // Aloca memória para cada vetor de n arestas da matriz 
+        novoGrafo->arestas[i] = (tAresta*) malloc(numVertices * sizeof(tAresta));
+        // Inicializa a matriz adjacente com distâncias iniciais
+        for (int j = 0; j < numVertices; j++) {
+            // Se o vertice inicial for o mesmo do final, a distância da aresta entre eles é 0
+            if (i == j) {
+                novoGrafo->arestas[i][j].distancia = 0; // Distância entre vértices iguais é zero
+            } else {
+                novoGrafo->arestas[i][j].distancia = -1; // Inicializa com distância -1 (sem aresta)
+            }
+            // Verifica alocação de cada vetor de arestas da matriz adjacente
+            if (novoGrafo->arestas[i] == NULL) {
+                liberarGrafo(novoGrafo);
+                return NULL;
+            }
+        }
+    }
+
+    return novoGrafo;
+}
+
+// Verifica se uma aresta existe entre dois vértices no grafo
+bool existeAresta(tGrafo *grafo, int verticeOrigem, int verticeDestino) {
+    // Verifica se os vértices de origem e destino da aresta são válidos
+    assert(verticeOrigem >= 0 && verticeOrigem < grafo->numVertices);
+    assert(verticeDestino >= 0 && verticeDestino < grafo->numVertices);
+
+    // Verifica se a distância da aresta entre os vértices é diferente de -1
+    return (grafo->arestas[verticeOrigem][verticeDestino].distancia != -1);
+}
+
+// Adiciona uma aresta ao grafo com a distância especificada
+bool adicionarAresta(tGrafo *grafo, int verticeOrigem, int verticeDestino, int distancia) {
+    // Verifica se os vértices de origem e destino da aresta e distância da aresta são válidos
+    assert(verticeOrigem >= 0 && verticeOrigem < grafo->numVertices);
+    assert(verticeDestino >= 0 && verticeDestino < grafo->numVertices);
+    assert(distancia >= 0);
+
+    // Verifica se a aresta já existe, nesse caso a aresta não é adicionada
+    if (existeAresta(grafo, verticeOrigem, verticeDestino)) {
+        return false;
+    }
+
+    // Atualiza a distância da aresta no grafo
+    grafo->arestas[verticeOrigem][verticeDestino].distancia = distancia;
+
+    return true;
+}
+
+// Remove uma aresta do grafo
+bool removerAresta(tGrafo *grafo, int verticeOrigem, int verticeDestino) {
+    // Verifica se os vértices de origem e destino da aresta são válidos
+    assert(verticeOrigem >= 0 && verticeOrigem < grafo->numVertices);
+    assert(verticeDestino >= 0 && verticeDestino < grafo->numVertices);
+
+    // Verifica se a aresta não existe, nesse caso a remoção não é possível
+    if (!existeAresta(grafo, verticeOrigem, verticeDestino)) {
+        return false;
+    }
+
+    // Atualiza a distância da aresta no grafo para -1, indicando que a aresta não existe
+    grafo->arestas[verticeOrigem][verticeDestino].distancia = -1;
+
+    return true;
+}
+
+void printArestas(tGrafo *grafo, int numVertices) {
+	printf("\n- Distâncias\n");
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            printf("%7d ", grafo->arestas[i][j].distancia);
+        }
+        printf("\n");
+    }
+}
+
+void passarConexoesParaGrafo(tGrafo *grafo, tConexao *dadosConexoes, int numConexoes, tAeroporto *dadosAeroportos, int numAeroportos) {
+    int inicio, destino;
+    bool check;
+    for (int i = 0; i < numConexoes; i++) {
+        inicio = idAerportoPorIATA(dadosConexoes[i].inicial->iata, dadosAeroportos, numAeroportos);
+        destino = idAerportoPorIATA(dadosConexoes[i].final->iata, dadosAeroportos, numAeroportos);
+        check = adicionarAresta(grafo, inicio, destino, dadosConexoes[i].distanciaKm);
+
+        if (DEBUG) {
+            if (check) {
+                printf("Conexão adicionada no grafo\n\n");
+            } else {
+                printf("Conexão inválida!\n\n");
+            }
+        }
+    }
+}
+
 int main() {
-    tAeroporto *aeroportos;
+    tAeroporto *dadosAeroportos;
     unsigned int numAeroportos = 0;
 
-    tConexao *conexoes;
+    tConexao *dadosConexoes;
     unsigned int numConexoes = 0;
 
     iniciarArquivo(AEROPORTOS_FILE);
     iniciarArquivo(CONEXOES_FILE);
 
     // Gerar lista de aeroportos e conexões a partir de dados dos arquivos
-    aeroportos = lerDadosAeroportos(&numAeroportos);
-    conexoes = lerDadosConexoes(aeroportos, numAeroportos, &numConexoes);
+    dadosAeroportos = lerDadosAeroportos(&numAeroportos);
+    dadosConexoes = lerDadosConexoes(dadosAeroportos, numAeroportos, &numConexoes);
+
+    // 
+    tGrafo *aeroportos = criarGrafo(numAeroportos);
+
+    passarConexoesParaGrafo(aeroportos, dadosConexoes, numConexoes, dadosAeroportos, numAeroportos);
 
     // Print tabelas de dados de aeroportos e conexões
-    printAeroportos(aeroportos, numAeroportos);
-    printConexoes(conexoes, numConexoes);
+    printAeroportos(dadosAeroportos, numAeroportos);
+    printConexoes(dadosConexoes, numConexoes);
+
+    printArestas(aeroportos, numAeroportos);
+
 
     // Desalocar memória
-    destruirConexoes(&conexoes, &numConexoes);
-    destruirAeroportos(&aeroportos, &numAeroportos);
+    destruirConexoes(&dadosConexoes, &numConexoes);
+    destruirAeroportos(&dadosAeroportos, &numAeroportos);
+
+    liberarGrafo(aeroportos);
 
     return 0;
 }
