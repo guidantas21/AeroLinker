@@ -18,7 +18,7 @@
 #define CONEXOES_FILE "dados/conexoes.csv"
 // #define CONEXOES_FILE "C:\\dados\\conexoes.csv"
 // Config
-#define DEBUG false
+#define DEBUG true
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -493,50 +493,54 @@ int main() {
     print_logo(logo);
 
     int opcao;
-
-    printf("menu\n");
-    printf("1. dados dos aeroportos\n");
-    printf("2. dados das conexões\n");
-    printf("3. printar arestas\n");
-    printf("4. mapa da rede aérea\n");
-    printf("5. cadastrar voos\n");
-    printf("6. remover voos\n");
-    printf("0. Sair do programa\n\n");
-    scanf ("%d", &opcao);
+    bool rodando = true;
+    while (rodando) {
+        printf("menu\n");
+        printf("1. dados dos aeroportos\n");
+        printf("2. dados das conexões\n");
+        printf("3. printar arestas\n");
+        printf("4. mapa da rede aérea\n");
+        printf("5. cadastrar voos\n");
+        printf("6. remover voos\n");
+        printf("0. Sair do programa\n\n");
+        scanf ("%d", &opcao);
 
     switch (opcao){
-    case 1: // Print tabelas de dados de aeroportos
-        printAeroportos(dadosAeroportos, numAeroportos);
-        break;
+        case 1: // Print tabelas de dados de aeroportos
+            printAeroportos(dadosAeroportos, numAeroportos);
+            break;
 
-    case 2: // Print tabelas de dados de conexões
-        printConexoes(dadosConexoes, numConexoes);
-        break;
+        case 2: // Print tabelas de dados de conexões
+            printConexoes(dadosConexoes, numConexoes);
+            break;
 
-    case 3: // Print matriz adjacente do grafo
-        printArestas(aeroportos, numAeroportos);
-        break;
-    
-    case 4: // Mostrar mapa da rede aérea no navegador
-        mostrarMapaRedeAerea();
-        break;
-    
-    case 5: // Adicionar voos
-        printf ("\nFunção 5 ainda não adicionada\n\n");
-        break;
+        case 3: // Print matriz adjacente do grafo
+            printArestas(aeroportos, numAeroportos);
+            break;
+        
+        case 4: // Mostrar mapa da rede aérea no navegador
+            mostrarMapaRedeAerea();
+            break;
+        
+        case 5: // Adicionar voos
+            printf ("\nFunção 5 ainda não adicionada\n\n");
+            break;
 
-    case 6: // Remover voos
-        printf ("\nFunção 6 ainda não adicionada\n\n");
-        break;
+        case 6: // Remover voos
+            printf ("\nFunção 6 ainda não adicionada\n\n");
+            break;
 
-    case 0: // Encerrar loop
-        printf ("Encerrar aplicação");
-        break;
+        case 0: // Encerrar loop
+            printf ("Encerrar aplicação\n");
+            rodando = false;
+            break;
 
-    default:
-        printf("Selecione uma opção válida");
-        break;
+        default:
+            printf("Selecione uma opção válida\n");
+            break;
+        }
     }
+    
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // LIBERAÇÃO DE MEMÓRIA ------------------------------------------------------------------------------------
