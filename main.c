@@ -530,7 +530,7 @@ int main() {
         break;
 
     case 0: // Encerrar loop
-
+        printf ("Encerrar aplicação");
         break;
 
     default:
