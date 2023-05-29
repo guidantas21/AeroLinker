@@ -428,6 +428,22 @@ void mostrarMapaRedeAerea() {
     }
 } 
 
+void print_logo(char endereço[]){
+    FILE *fptr = fopen(endereço,"r");
+
+    if(fptr == NULL){
+        // fprintf(stderr,"error opening %s\n",logo);
+        return;
+    }
+
+    char read_string[128];
+ 
+    while(fgets(read_string,sizeof(read_string),fptr) != NULL)
+    printf("%s",read_string);
+
+    fclose(fptr);
+}
+
 int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SETUP ---------------------------------------------------------------------------------------------------
@@ -471,6 +487,17 @@ int main() {
     perguntar o que o usário quer
     fazer o que o usário pedir (executar umas das funçoes disponíveis ou sair do programa)
     */
+
+    char *logo = "dados/logo.txt";
+ 
+    print_logo(logo);
+
+    printf("menu\n");
+    printf("1. printar dados dos aeroportos\n");
+    printf("2. printar dados das conexões\n");
+    printf("3. printar arestas\n");
+    printf("4. Mostrar mapa da rede aérea\n");
+    printf("0. Sair do programa\n");
 
     // Print tabelas de dados de aeroportos e conexões
     printAeroportos(dadosAeroportos, numAeroportos);
