@@ -37,8 +37,8 @@ def abrir_html_no_navegador(arquivo_html):
     webbrowser.open(url)
 
 # Exemplo de uso
-aeroportos = ler_dados_aeroportos('./dados/aeroportos.csv')
-conexoes = ler_dados_conexoes('./dados/conexoes.csv')
+aeroportos = ler_dados_aeroportos('./dados/test3.csv')
+conexoes = ler_dados_conexoes('./dados/test2.csv')
 
 # Criar um mapa
 m = folium.Map(location=[0, 0], zoom_start=2)
@@ -65,16 +65,16 @@ for conexao in conexoes:
             weight=2
         ).add_to(m)
         
-        # Calcular o ponto médio da conexão
-        mid_lat = (inicio["Lat"] + destino["Lat"]) / 2
-        mid_long = (inicio["Long"] + destino["Long"]) / 2
+        # # Calcular o ponto médio da conexão
+        # mid_lat = (inicio["Lat"] + destino["Lat"]) / 2
+        # mid_long = (inicio["Long"] + destino["Long"]) / 2
         
-        # Adicionar a legenda da distância
-        folium.Marker(
-            location=[mid_lat, mid_long],
-            icon=folium.Icon(color='white', icon_color='blue', icon='info-sign'),
-            popup=f"{conexao['distancia']} km",
-        ).add_to(m)
+        # # Adicionar a legenda da distância
+        # folium.Marker(
+        #     location=[mid_lat, mid_long],
+        #     icon=folium.Icon(color='white', icon_color='blue', icon='info-sign'),
+        #     popup=f"{conexao['distancia']} km",
+        # ).add_to(m)
 
 # Salvar o mapa como um arquivo HTML
 m.save('mapas/mapa.html')

@@ -18,7 +18,7 @@
 #define CONEXOES_FILE "dados/conexoes.csv"
 // #define CONEXOES_FILE "C:\\dados\\conexoes.csv"
 // Config
-#define DEBUG false
+#define DEBUG true
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -428,8 +428,8 @@ void mostrarMapaRedeAerea() {
     }
 } 
 
-void print_logo(char endereço[]){
-    FILE *fptr = fopen(endereço,"r");
+void print_logo(char endereco[]){
+    FILE *fptr = fopen(endereco,"r");
 
     if(fptr == NULL){
         // fprintf(stderr,"error opening %s\n",logo);
