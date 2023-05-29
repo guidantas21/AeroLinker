@@ -18,7 +18,7 @@
 #define CONEXOES_FILE "dados/conexoes.csv"
 // #define CONEXOES_FILE "C:\\dados\\conexoes.csv"
 // Config
-#define DEBUG true
+#define DEBUG false
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -501,50 +501,42 @@ int main() {
     printf("4. mapa da rede aérea\n");
     printf("5. cadastrar voos\n");
     printf("6. remover voos\n");
-    printf("0. Sair do programa\n");
-    scanf ("%d", %opcao);
+    printf("0. Sair do programa\n\n");
+    scanf ("%d", &opcao);
 
-    switch (opcao)
-    {
-    case 1:
-    
+    switch (opcao){
+    case 1: // Print tabelas de dados de aeroportos
+        printAeroportos(dadosAeroportos, numAeroportos);
         break;
 
-    case 2:
-    
+    case 2: // Print tabelas de dados de conexões
+        printConexoes(dadosConexoes, numConexoes);
         break;
 
-    case 3:
-    
+    case 3: // Print matriz adjacente do grafo
+        printArestas(aeroportos, numAeroportos);
         break;
     
-    case 4:
-    
+    case 4: // Mostrar mapa da rede aérea no navegador
+        mostrarMapaRedeAerea();
         break;
     
-    case 5:
+    case 5: // Adicionar voos
+        printf ("\nFunção 5 ainda não adicionada\n\n");
+        break;
 
+    case 6: // Remover voos
+        printf ("\nFunção 6 ainda não adicionada\n\n");
         break;
 
-    case 6:
+    case 0: // Encerrar loop
 
         break;
 
     default:
-    
+        printf("Selecione uma opção válida");
         break;
     }
-
-    // Print tabelas de dados de aeroportos e conexões
-    printAeroportos(dadosAeroportos, numAeroportos);
-    printConexoes(dadosConexoes, numConexoes);
-
-    // Print matriz adjacente do grafo
-    printArestas(aeroportos, numAeroportos);
-
-    // Mostrar mapa da rede aérea no navegador
-    mostrarMapaRedeAerea();
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // LIBERAÇÃO DE MEMÓRIA ------------------------------------------------------------------------------------
