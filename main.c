@@ -492,12 +492,48 @@ int main() {
  
     print_logo(logo);
 
+    int opcao;
+
     printf("menu\n");
-    printf("1. printar dados dos aeroportos\n");
-    printf("2. printar dados das conexões\n");
+    printf("1. dados dos aeroportos\n");
+    printf("2. dados das conexões\n");
     printf("3. printar arestas\n");
-    printf("4. Mostrar mapa da rede aérea\n");
+    printf("4. mapa da rede aérea\n");
+    printf("5. cadastrar voos\n");
+    printf("6. remover voos\n");
     printf("0. Sair do programa\n");
+    scanf ("%d", %opcao);
+
+    switch (opcao)
+    {
+    case 1:
+    
+        break;
+
+    case 2:
+    
+        break;
+
+    case 3:
+    
+        break;
+    
+    case 4:
+    
+        break;
+    
+    case 5:
+
+        break;
+
+    case 6:
+
+        break;
+
+    default:
+    
+        break;
+    }
 
     // Print tabelas de dados de aeroportos e conexões
     printAeroportos(dadosAeroportos, numAeroportos);
