@@ -62,7 +62,7 @@ for conexao in conexoes:
         folium.PolyLine(
             locations=[[inicio["Lat"], inicio["Long"]], [destino["Lat"], destino["Long"]]],
             color='blue',
-            weight=2
+            weight=1
         ).add_to(m)
         
         # # Calcular o ponto médio da conexão
