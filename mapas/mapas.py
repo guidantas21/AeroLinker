@@ -37,8 +37,8 @@ def abrir_html_no_navegador(arquivo_html):
     webbrowser.open(url)
 
 # Exemplo de uso
-aeroportos = ler_dados_aeroportos('./dados/test3.csv')
-conexoes = ler_dados_conexoes('./dados/test2.csv')
+aeroportos = ler_dados_aeroportos('./dados/aeroportos.csv')
+conexoes = ler_dados_conexoes('./dados/conexoes.csv')
 
 # Criar um mapa
 m = folium.Map(location=[0, 0], zoom_start=2)
