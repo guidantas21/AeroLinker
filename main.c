@@ -3,11 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
-<<<<<<< HEAD
 #include <limits.h>
-=======
 #include <time.h>
->>>>>>> 3dd8d9131d645029e606d8d920ae169e50b1fff4
 
 #ifdef _WIN32
     #define COMANDO_MAPA_PYTHON "python mapas/mapas.py"
@@ -23,7 +20,7 @@
 #define CONEXOES_FILE "dados/conexoes.csv"
 // #define CONEXOES_FILE "C:\\dados\\conexoes.csv"
 // Config
-#define DEBUG true
+#define DEBUG false
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -434,12 +431,10 @@ void mostrarMapaRedeAerea() {
     }
 } 
 
-<<<<<<< HEAD
 void print_logo(char endereco[]){
     FILE *fptr = fopen(endereco,"r");
-=======
+}
 #define clear() printf("\033[H\033[J")
->>>>>>> 3dd8d9131d645029e606d8d920ae169e50b1fff4
 
 void splashScreen(int duracao) {
     printf("                                  _      _       _             \n");
