@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 
 #ifdef _WIN32
     #define COMANDO_MAPA_PYTHON "python mapas/mapas.py"
@@ -428,20 +429,31 @@ void mostrarMapaRedeAerea() {
     }
 } 
 
-void print_logo(char endereço[]){
-    FILE *fptr = fopen(endereço,"r");
+#define clear() printf("\033[H\033[J")
 
-    if(fptr == NULL){
-        // fprintf(stderr,"error opening %s\n",logo);
-        return;
+void splashScreen(int duracao) {
+    printf("                                  _      _       _             \n");
+    printf("              /\\                 | |    (_)     | |            \n");
+    printf("             /  \\   ___ _ __ ___ | |     _ _ __ | | _____ _ __ \n");
+    printf("            / /\\ \\ / _ \\ '__/ _ \\| |    | | '_ \\| |/ / _ \\ '__|\n");
+    printf("           / ____ \\  __/ | | (_) | |____| | | | |   <  __/ |   \n");
+    printf("          /_/    \\_\\___|_|  \\___/|______|_|_| |_|_|\\_\\___|_|   \n");
+    printf("                                                             \n");
+    printf("                                                             \n");
+    printf("                                    |                        \n");
+    printf("                                    |                        \n");
+    printf("                                    |                        \n");
+    printf("                                  .-'-'-.\n");
+    printf("                                 ' ___ '\n");
+    printf("                       ---------'  .-.  '---------\n");
+    printf("       _________________________'  '-'  '_________________________\n");
+    printf("        ''''''-|---|--/    \\==][^',_m_,'^][==/    \\--|---|-''''''\n");
+    printf("                      \\    /  ||/   H   \\||  \\    /\n");
+    printf("                       '--'   OO   O|O   OO   '--'\n");
+
+    time_t startTime = time(NULL);
+    while (time(NULL) - startTime < duracao) {
     }
-
-    char read_string[128];
- 
-    while(fgets(read_string,sizeof(read_string),fptr) != NULL)
-    printf("%s",read_string);
-
-    fclose(fptr);
 }
 
 int main() {
@@ -474,23 +486,9 @@ int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // LOOP DA APLICAÇÃO ---------------------------------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    /*
-    TODO:
-    criar loop infinito
-    mostrar opcoes
-        1. printar dados dos aeroportos
-        2. printar dados das conexões
-        3. printar arestas
-        4. Mostrar mapa da rede aérea
-        0. Sair do prgrama (finaliza o loop da aplicação)
-    perguntar o que o usário quer
-    fazer o que o usário pedir (executar umas das funçoes disponíveis ou sair do programa)
-    */
 
-    char *logo = "dados/logo.txt";
- 
-    print_logo(logo);
+    splashScreen(3);
+    clear();
 
     int opcao;
     bool rodando = true;
@@ -531,7 +529,7 @@ int main() {
             break;
 
         case 0: // Encerrar loop
-            printf ("Encerrar aplicação\n");
+            printf ("Encerrando aplicação\n");
             rodando = false;
             break;
 
