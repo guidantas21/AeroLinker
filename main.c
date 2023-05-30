@@ -612,6 +612,13 @@ void calculaDistanciaEntreVertice(tGrafo *grafo, tPilha *pilha, int **vetor){
     }
 }
 
+void perguntaAeroporto (){
+    char AeroInicial [10];
+    char AeroFinal [10];
+    printf ("\nAeroporto Inicial (IATA): "); scanf ("%s", &AeroInicial);
+    printf ("Aeroporto Final (IATA): "); scanf ("%s", &AeroFinal); printf("\n");
+}
+
 int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SETUP ---------------------------------------------------------------------------------------------------
@@ -697,7 +704,7 @@ int main() {
                 break;
             
             case 5: // Adicionar voos
-                printf ("\nFunção 5 ainda não adicionada\n\n");
+                perguntaAeroporto();
                 break;
 
             case 6: // Remover voos
