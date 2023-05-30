@@ -22,7 +22,7 @@
 
 #define clear() system(CLEAR_SCREEN_COMMAND)
 // Config
-#define DEBUG true
+#define DEBUG false
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -605,9 +605,9 @@ void calculaDistanciaEntreVertice(tGrafo *grafo, tPilha *pilha, int **vetor){
     int tamanho = pilha->topo - 1;
     *vetor = (int*)malloc(tamanho * sizeof(int));
   
-    for(i =0, j =1 ; j<=pilha->topo; i++, j++){
-        v=pilha->items[i];
-        f=pilha->items[j];
+    for (i =0, j =1 ; j<=pilha->topo; i++, j++){
+        v = pilha->items[i];
+        f = pilha->items[j];
         (*vetor)[i] = grafo->arestas[v][f].distancia;
     }
 }
@@ -643,12 +643,14 @@ int main() {
     // LOOP DA APLICAÇÃO ---------------------------------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    clear(); 
     splashScreen(3);
+    clear(); 
 
     int opcao;
     bool rodando = true;
 
-    // tCaminho *caminho = criaCaminho(aeroportos);
+    tCaminho *caminho = criaCaminho(aeroportos);
     int *distanciaEntreVertices;
 
     int a = idAerportoPorIATA("GRU", dadosAeroportos, numAeroportos);
@@ -713,7 +715,6 @@ int main() {
                 printf("\nSelecione uma opção válida\n");
                 break;
         }
-        clear(); 
     }
     
 
