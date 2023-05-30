@@ -6,21 +6,23 @@
 #include <limits.h>
 #include <time.h>
 
+// Endereco para dados
+
 #ifdef _WIN32
     #define COMANDO_MAPA_PYTHON "python mapas/mapas.py"
-    // const char* comando = "python arquivo.py";  // Comando para Windows
+    #define CLEAR_SCREEN_COMMAND "cls"
 #else
-    // const char* comando = "python3 arquivo.py"; // Comando para Linux e macOS
     #define COMANDO_MAPA_PYTHON "python3 mapas/mapas.py"
+    #define CLEAR_SCREEN_COMMAND "clear"
 #endif
 
-// Endereco para dados
 #define AEROPORTOS_FILE "dados/aeroportos.csv"
-// #define AEROPORTOS_FILE "C:\\dados\\aeroportos.csv"
+
 #define CONEXOES_FILE "dados/conexoes.csv"
-// #define CONEXOES_FILE "C:\\dados\\conexoes.csv"
+
+#define clear() system(CLEAR_SCREEN_COMMAND)
 // Config
-#define DEBUG false
+#define DEBUG true
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -171,13 +173,14 @@ void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
 
 tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos) {
     for (int i = 0; i < numAeroportos; i++) {
-        printf("%d %s %s\n",i, aeroportos[i].iata, iata);
         if (!strcmp(aeroportos[i].iata, iata) ) {
             debugAcharAeroporto(aeroportos[i], iata);
             return &aeroportos[i];
         }
     }
+
     if (DEBUG) printf("Aeroporto de IATA '%s' não encontrado\n", iata);
+
     return NULL;
 }
 
@@ -434,7 +437,6 @@ void mostrarMapaRedeAerea() {
 void print_logo(char endereco[]){
     FILE *fptr = fopen(endereco,"r");
 }
-#define clear() printf("\033[H\033[J")
 
 void splashScreen(int duracao) {
     printf("                                  _      _       _             \n");
@@ -457,8 +459,7 @@ void splashScreen(int duracao) {
     printf("                       '--'   OO   O|O   OO   '--'\n");
 
     time_t startTime = time(NULL);
-    while (time(NULL) - startTime < duracao) {
-    }
+    while (time(NULL) - startTime < duracao);
 }
 
 char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id) {
@@ -471,49 +472,52 @@ char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id) {
 }
 
 typedef struct{
-  int topo;
-  int *items;
-} tPilha;
+    int topo;
+    int *items;
+}tPilha;
 
 typedef struct{
-  int menorDistancia;
-  tPilha pilha;
+    int menorDistancia;
+    tPilha pilha;
 }tCaminho;
 
 // Cria uma nova pilha vazia
 tPilha *criaPilha(tGrafo *grafo){
-  int tamanho_max= grafo->numVertices;
-  tPilha *novaPilha = (tPilha*)malloc( sizeof(tPilha));
-  novaPilha->items = (int*)malloc(tamanho_max * sizeof(int));
-  if (novaPilha == NULL) {
+    int tamanho_max= grafo->numVertices;
+
+    tPilha *novaPilha = (tPilha*)malloc( sizeof(tPilha));
+    novaPilha->items = (int*)malloc(tamanho_max * sizeof(int));
+
+    if (novaPilha == NULL) {
         return NULL;
-  }
-  novaPilha->topo=-1;
-  return novaPilha;
+    }
+
+    novaPilha->topo = -1;
+
+    return novaPilha;
 }
 
 //adiciona itens a pilha
 void empilhar(tPilha *pilha, int item){
-  pilha->topo++;
-  pilha->items[pilha->topo]= item;
+    pilha->topo++;
+    pilha->items[pilha->topo] = item;
 }
 
 //remove itens da pilha
 void desempilhar(tPilha *p){
-  int item_remov = p->items[p->topo];
-  p->topo--;
+    int item_remov = p->items[p->topo];
+    p->topo--;
 }
 
 //cria caminho
-tCaminho *criaCaminho(tGrafo grafo){
+tCaminho *criaCaminho(tGrafo *grafo){
     tCaminho *novoCaminho = (tCaminho*)malloc(sizeof(tCaminho));
-
     if (novoCaminho == NULL) {
         return NULL;
     }
     
     novoCaminho->menorDistancia = 0;
-    novoCaminho->pilha = *criaPilha(&grafo);
+    novoCaminho->pilha = *criaPilha(grafo);
     
     return novoCaminho;
 }
@@ -533,98 +537,77 @@ int verificarNumero(int array[], int tamanho, int numero) {
     return 0; 
 }
 
-void printArray(int array[], int size) {
-    for (int i = 0; i < size; i++) {
-        printf("%s ", array[i]);
-    }
-    printf("\n");
-}
-
-// void printArrayId(tAeroporto *aeroporto, int array[], int size) {
-//     for (int i = 0; i < size; i++) {
-//         printf("%s ", iataPorId(, size, array[i]));
-//     }
-//     printf("\n");
-// }
-
-int encontrarVerticeMinimo(int distancia[], int visitado[], int numVertices) {
+int encontrarVerticeMinimo(int distancia[], int visitado[], int nVertices) {
     int minimo = INT_MAX, indiceMinimo;
 
-    for (int v = 0; v < numVertices; v++) {
+    for (int v = 0; v < nVertices; v++) {
         if (!visitado[v] && distancia[v] <= minimo) {
             minimo = distancia[v];
             indiceMinimo = v;
         }
     }
+
     return indiceMinimo;
 }
 
 void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho){
-    /*inicio da declaração de variavel*/
+    //inicio da declaração de variavel//
     int estimativas[grafo->numVertices];
     int precedentes[grafo->numVertices];
     int visitados[grafo->numVertices];
     int vAnalise;
-
     tPilha *tempPilha = criaPilha(grafo);
-    
-    /*calculando o menor caminho do verticie inicial para os demais*/
+  
+    //calculando o menor caminho do verticie inicial para os demais//
     for (int v = 0; v < grafo->numVertices; v++) {
         estimativas[v] = INT_MAX;
         visitados[v] = 0;
     }
-    
+  
     estimativas[vInicial]=0;
     precedentes[vInicial]=0;
 
-    for (int c = 0; c < grafo->numVertices - 1; c++) {
+    for (int c=0; c < grafo->numVertices - 1; c++) {
         int vMin = encontrarVerticeMinimo(estimativas, visitados, grafo->numVertices);
-
         visitados[vMin] = 1;
 
         for (int j = 0; j < grafo->numVertices; j++) {
+          
             if (!visitados[j] && grafo->arestas[vMin][j].distancia !=-1 && estimativas[vMin] != INT_MAX
                 && estimativas[vMin] + grafo->arestas[vMin][j].distancia < estimativas[j]) {
-                estimativas[j] = estimativas[vMin] + grafo->arestas[vMin][j].distancia;
-                precedentes[j]=vMin;
+                  estimativas[j] = estimativas[vMin] + grafo->arestas[vMin][j].distancia;
+                  precedentes[j] = vMin;
             }
         }
     }
 
-    caminho->menorDistancia = estimativas[vFinal];
-
-    // printArray(visitados, grafo->numVertices);
-    // printArray(estimativas, grafo->numVertices);
-    // printArray(precedentes, grafo->numVertices);
+    caminho->menorDistancia=estimativas[vFinal];
 
     //Adicionando em uma pilha o caminho
     empilhar(tempPilha, vFinal);
     vAnalise = vFinal;
 
-    while(vAnalise != vInicial){
+    while(vAnalise!=vInicial){
         empilhar(tempPilha, precedentes[vAnalise]);
         vAnalise=precedentes[vAnalise];
     }
 
     empilhar(tempPilha, vInicial);
 
-    for(int i = tempPilha->topo-1; i >= 0; i--){
+    for(int i=tempPilha->topo-1; i>=0; i--){
         empilhar(&caminho->pilha, tempPilha->items[i]);
     }
-
-    // printArray(caminho->pilha.items, caminho->pilha.topo + 1);
 }
 
-//armazena em um vetor a distancia entre os vertices de uma pilha de acordo com o grafo
 void calculaDistanciaEntreVertice(tGrafo *grafo, tPilha *pilha, int **vetor){
     int i, j, v, f;
 
     int tamanho = pilha->topo - 1;
     *vetor = (int*)malloc(tamanho * sizeof(int));
   
-    for(i = 0, j = 1 ; j<=pilha->topo; i++, j++){
-        v = pilha->items[i];
-        f = pilha->items[j];
+    for(i =0, j =1 ; j<=pilha->topo; i++, j++){
+        v=pilha->items[i];
+        f=pilha->items[j];
         (*vetor)[i] = grafo->arestas[v][f].distancia;
     }
 }
@@ -661,28 +644,27 @@ int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     splashScreen(3);
-    clear();
 
     int opcao;
     bool rodando = true;
 
-    tCaminho *caminho = criaCaminho(*aeroportos);
+    // tCaminho *caminho = criaCaminho(aeroportos);
     int *distanciaEntreVertices;
 
     int a = idAerportoPorIATA("GRU", dadosAeroportos, numAeroportos);
-    int b = idAerportoPorIATA("HND", dadosAeroportos, numAeroportos);
+    int b = idAerportoPorIATA("AKL", dadosAeroportos, numAeroportos);
 
     menorDistancia(aeroportos, a, b, caminho);
 
     printf("%d\n", caminho->menorDistancia);
 
-    int v[caminho->pilha.topo-1];
+    int v[caminho->pilha.topo];
 
-    for (int j=0; j<caminho->pilha.topo; j++){
+    for (int j=0; j<caminho->pilha.topo+1; j++){
       v[j] = caminho->pilha.items[j];
     }
 
-    for (int i=0; i<caminho->pilha.topo; i++) {
+    for (int i=0; i<caminho->pilha.topo+1; i++) {
         printf("%d\n", v[i]);
     }
 
@@ -697,40 +679,41 @@ int main() {
         printf("0. Sair do programa\n\n");
         scanf ("%d", &opcao);
 
-    switch (opcao){
-        case 1: // Print tabelas de dados de aeroportos
-            printAeroportos(dadosAeroportos, numAeroportos);
-            break;
+        switch (opcao){
+            case 1: // Print tabelas de dados de aeroportos
+                printAeroportos(dadosAeroportos, numAeroportos);
+                break;
 
-        case 2: // Print tabelas de dados de conexões
-            printConexoes(dadosConexoes, numConexoes);
-            break;
+            case 2: // Print tabelas de dados de conexões
+                printConexoes(dadosConexoes, numConexoes);
+                break;
 
-        case 3: // Print matriz adjacente do grafo
-            printArestas(aeroportos, numAeroportos);
-            break;
-        
-        case 4: // Mostrar mapa da rede aérea no navegador
-            mostrarMapaRedeAerea();
-            break;
-        
-        case 5: // Adicionar voos
-            printf ("\nFunção 5 ainda não adicionada\n\n");
-            break;
+            case 3: // Print matriz adjacente do grafo
+                printArestas(aeroportos, numAeroportos);
+                break;
+            
+            case 4: // Mostrar mapa da rede aérea no navegador
+                mostrarMapaRedeAerea();
+                break;
+            
+            case 5: // Adicionar voos
+                printf ("\nFunção 5 ainda não adicionada\n\n");
+                break;
 
-        case 6: // Remover voos
-            printf ("\nFunção 6 ainda não adicionada\n\n");
-            break;
+            case 6: // Remover voos
+                printf ("\nFunção 6 ainda não adicionada\n\n");
+                break;
 
-        case 0: // Encerrar loop
-            printf ("Encerrando aplicação\n");
-            rodando = false;
-            break;
+            case 0: // Encerrar loop
+                printf ("\nEncerrando aplicação\n");
+                rodando = false;
+                break;
 
-        default:
-            printf("Selecione uma opção válida\n");
-            break;
+            default:
+                printf("\nSelecione uma opção válida\n");
+                break;
         }
+        clear(); 
     }
     
 
