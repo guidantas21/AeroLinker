@@ -22,7 +22,7 @@
 
 #define clear() system(CLEAR_SCREEN_COMMAND)
 // Config
-#define DEBUG false
+#define DEBUG true
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG ------------------------------------------------------------------------------------------------------
@@ -612,11 +612,11 @@ void calculaDistanciaEntreVertice(tGrafo *grafo, tPilha *pilha, int **vetor){
     }
 }
 
-void perguntaAeroporto (){
-    char AeroInicial [10];
-    char AeroFinal [10];
-    printf ("\nAeroporto Inicial (IATA): "); scanf ("%s", &AeroInicial);
-    printf ("Aeroporto Final (IATA): "); scanf ("%s", &AeroFinal); printf("\n");
+void perguntaAeroporto(char iataInicial[], char iataFinal[]){
+    printf ("\nAeroporto Inicial (IATA): "); 
+    scanf ("%s", iataInicial);
+    printf ("Aeroporto Final (IATA): "); 
+    scanf ("%s", iataFinal);
 }
 
 int main() {
@@ -660,25 +660,13 @@ int main() {
     tCaminho *caminho = criaCaminho(aeroportos);
     int *distanciaEntreVertices;
 
-    int a = idAerportoPorIATA("GRU", dadosAeroportos, numAeroportos);
-    int b = idAerportoPorIATA("AKL", dadosAeroportos, numAeroportos);
+    int idInicial, idFinal;
+    char iataInicial[4], iataFinal[4];
 
-    menorDistancia(aeroportos, a, b, caminho);
-
-    printf("%d\n", caminho->menorDistancia);
-
-    int v[caminho->pilha.topo];
-
-    for (int j=0; j<caminho->pilha.topo+1; j++){
-      v[j] = caminho->pilha.items[j];
-    }
-
-    for (int i=0; i<caminho->pilha.topo+1; i++) {
-        printf("%d\n", v[i]);
-    }
+    int vertices[caminho->pilha.topo];
 
     while (rodando) {
-        printf("menu\n");
+        printf("Menu\n");
         printf("1. dados dos aeroportos\n");
         printf("2. dados das conexões\n");
         printf("3. printar arestas\n");
@@ -706,7 +694,25 @@ int main() {
                 break;
             
             case 5: // Adicionar voos
-                perguntaAeroporto();
+                perguntaAeroporto(iataInicial, iataFinal);
+
+                idInicial = idAerportoPorIATA(iataInicial, dadosAeroportos, numAeroportos);
+                idFinal = idAerportoPorIATA(iataFinal, dadosAeroportos, numAeroportos);
+
+                printf("%s %s\n", iataInicial, iataFinal);
+
+                menorDistancia(aeroportos, idInicial, idFinal, caminho);
+
+                printf("%d\n", caminho->menorDistancia);
+
+                for (int j=0; j<caminho->pilha.topo+1; j++){
+                    vertices[j] = caminho->pilha.items[j];
+                }
+
+                for (int i=0; i<caminho->pilha.topo+1; i++) {
+                    printf("%d\n", vertices[i]);
+                }
+                
                 break;
 
             case 6: // Remover voos
