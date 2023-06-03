@@ -1,0 +1,1 @@
+gcc -o main main.c src/aeroporto.c src/debug.c src/utils.c src/conexao.c src/grafo.c src/interface.c src/pilha.c src/caminho.c src/voo.c

@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "aeroporto.h": "c",
+        "grafo.h": "c",
+        "pilha.h": "c",
+        "caminho.h": "c",
+        "interface.h": "c",
+        "conexao.h": "c",
+        "debug.h": "c",
+        "utils.h": "c"
+    }
+}
