@@ -64,17 +64,6 @@ for conexao in conexoes:
             color='blue',
             weight=1
         ).add_to(m)
-        
-        # # Calcular o ponto médio da conexão
-        # mid_lat = (inicio["Lat"] + destino["Lat"]) / 2
-        # mid_long = (inicio["Long"] + destino["Long"]) / 2
-        
-        # # Adicionar a legenda da distância
-        # folium.Marker(
-        #     location=[mid_lat, mid_long],
-        #     icon=folium.Icon(color='white', icon_color='blue', icon='info-sign'),
-        #     popup=f"{conexao['distancia']} km",
-        # ).add_to(m)
 
 # Salvar o mapa como um arquivo HTML
 m.save('mapas/mapa.html')

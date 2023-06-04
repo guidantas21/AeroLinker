@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
-#include <limits.h>
+#include <ctype.h>
 
 #include "include/aeroporto.h"
 #include "include/conexao.h"
@@ -43,11 +42,6 @@ int main() {
     // Passar dados pra o grafo
     passarConexoesParaGrafo(aeroportos, dadosConexoes, numConexoes, dadosAeroportos, numAeroportos);
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // LOOP DA APLICAÇÃO ---------------------------------------------------------------------------------------
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     cleanCMD();
     splashScreen(3);
     cleanCMD();
@@ -55,13 +49,12 @@ int main() {
     int opcao;
     bool rodando = true;
 
-    tCaminho *caminho = criaCaminho(aeroportos);
-    int *distanciaEntreVertices;
-
-    int idInicial, idFinal;
+    // int idInicial, idFinal;
     char iataInicial[4], iataFinal[4];
 
-    int vertices[caminho->pilha.topo];
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // LOOP DA APLICAÇÃO ---------------------------------------------------------------------------------------
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     while (rodando) {
         printf("Menu\n");
@@ -94,23 +87,18 @@ int main() {
             case 5: // Adicionar voos
                 perguntaAeroporto(iataInicial, iataFinal);
 
-                idInicial = idAerportoPorIATA(iataInicial, dadosAeroportos, numAeroportos);
-                idFinal = idAerportoPorIATA(iataFinal, dadosAeroportos, numAeroportos);
+                tAeroporto *aeroportoInicial = acharAeroportoPorIATA(stringMaiuscula(iataInicial), dadosAeroportos, numAeroportos);
+                tAeroporto *aeroportoFinal = acharAeroportoPorIATA(stringMaiuscula(iataFinal), dadosAeroportos, numAeroportos);
+            
+                tCaminho *caminho = criaCaminho(aeroportos);
 
-                printf("%s %s\n", iataInicial, iataFinal);
+                menorDistancia(aeroportos, aeroportoInicial->id, aeroportoFinal->id, caminho);
 
-                menorDistancia(aeroportos, idInicial, idFinal, caminho);
-
-                printf("%d\n", caminho->menorDistancia);
-
-                for (int j=0; j<caminho->pilha.topo+1; j++){
-                    vertices[j] = caminho->pilha.items[j];
-                }
-
-                for (int i=0; i<caminho->pilha.topo+1; i++) {
-                    printf("%d\n", vertices[i]);
-                }
+                tVoo *voo = criarVoo(aeroportoInicial, aeroportoFinal, caminho);
                 
+                printVooInfo(voo);
+
+                destruirVoo(voo);
                 break;
 
             case 6: // Remover voos

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "aeroporto.h"
 #include "caminho.h"
 
@@ -5,9 +7,15 @@
 #define VOO_H
 
 typedef struct  {
-    tAeroporto aeroportoInicial;
-    tAeroporto aeroportoFinal;
-    tCaminho trajeto;
+    tAeroporto *aeroportoInicial;
+    tAeroporto *aeroportoFinal;
+    tCaminho *trajeto;
 } tVoo;
+
+tVoo *criarVoo(tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, tCaminho *trajeto);
+
+void printVooInfo(tVoo *voo);
+
+void destruirVoo(tVoo *voo);
 
 #endif

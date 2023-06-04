@@ -5,7 +5,7 @@
 
 // Cria uma nova pilha vazia
 tPilha *criaPilha(tGrafo *grafo){
-    int tamanho_max= grafo->numVertices;
+    int tamanho_max = grafo->numVertices;
 
     tPilha *novaPilha = (tPilha*)malloc( sizeof(tPilha));
     novaPilha->items = (int*)malloc(tamanho_max * sizeof(int));

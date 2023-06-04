@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
 
 #include "../include/debug.h"
 
@@ -41,4 +43,11 @@ unsigned int contarLinhasDeArquivo(FILE *fptr) {
     if (DEBUG) printf("O arquivo possui %d linhas\n", c);
 
     return c;
+}
+
+char *stringMaiuscula(char* str) {
+    for (int i = 0; i < strlen(str); i++) {
+        str[i] = toupper(str[i]);
+    }
+    return str;
 }

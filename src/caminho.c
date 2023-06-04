@@ -20,7 +20,7 @@ tCaminho *criaCaminho(tGrafo *grafo){
 }
 
 //liberando memoria alocada para caminho
-void liberaCaminho(tCaminho *caminho){
+void liberarCaminho(tCaminho *caminho) {
   free(caminho->pilha.items);
   free(caminho);
 }

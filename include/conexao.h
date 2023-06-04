@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef CONEXAO_H
 #define CONEXAO_H
 

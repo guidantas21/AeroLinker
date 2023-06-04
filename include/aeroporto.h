@@ -1,9 +1,12 @@
+#pragma once
+
 #ifndef AEROPORTOS_H
 #define AEROPORTOS_H
 
 #define AEROPORTOS_FILE "dados/aeroportos.csv"
 
 typedef struct {
+    unsigned int id;
     char iata[4];
     char nome[100];
     char local[100];
@@ -21,5 +24,7 @@ void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos);
 tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos);
 
 int idAerportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos);
+
+char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id);
 
 #endif /* AEROPORTOS_H */

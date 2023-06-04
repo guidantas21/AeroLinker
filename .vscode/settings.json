@@ -8,6 +8,7 @@
         "interface.h": "c",
         "conexao.h": "c",
         "debug.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "voo.h": "c"
     }
 }

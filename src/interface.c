@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/aeroporto.h"
 #include "../include/interface.h"
@@ -29,7 +30,7 @@ void splashScreen(int duracao) {
     printf("                                    |                        \n");
     printf("                                    |                        \n");
     printf("                                    |                        \n");
-    printf("                                  .-'-'-.\n");
+    printf("                                  .-'-.\n");
     printf("                                 ' ___ '\n");
     printf("                       ---------'  .-.  '---------\n");
     printf("       _________________________'  '-'  '_________________________\n");
@@ -41,20 +42,11 @@ void splashScreen(int duracao) {
     while (time(NULL) - startTime < duracao);
 }
 
-char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id) {
-    for (int i = 0; i < numAeroportos; i++) {
-        if (idAerportoPorIATA(aeroporto->iata, aeroporto, numAeroportos) == id) {
-            return aeroporto->iata;
-        }
-    }
-    return NULL;
-}
-
 void perguntaAeroporto(char iataInicial[], char iataFinal[]) {
     printf ("\nAeroporto Inicial (IATA): "); 
-    scanf ("%s", iataInicial);
+    scanf("%s", iataInicial);
     printf ("Aeroporto Final (IATA): "); 
-    scanf ("%s", iataFinal);
+    scanf("%s", iataFinal);
 }
 
 void cleanCMD() {

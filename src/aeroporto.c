@@ -33,6 +33,7 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
         aeroportos[index].pais,
         &aeroportos[index].latitude,
         &aeroportos[index].longitude) == 6) {
+        aeroportos[index].id = index;
         index++;
     }
 
@@ -46,6 +47,7 @@ void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
     printf("\n- Aeroportos cadastrados:\n");
     printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t\t | LATITUDE\t| LONGITUDE    |\n");
     for (int i = 0; i < numAeroportos; i++) {
+        printf("| %3d\t| ", aeroportos[i].id);
         printf("| %3s\t| ", aeroportos[i].iata);
         printf("%-*s\t | ",  25, aeroportos[i].nome);
         printf("%-*s\t | ", 25, aeroportos[i].local);
@@ -88,4 +90,13 @@ int idAerportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroporto
     }
     if (DEBUG) printf("Aeroporto de IATA '%s' não encontrado\n", iata);
     return -1;
+}
+
+char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id) {
+    for (int i = 0; i < numAeroportos; i++) {
+        if (idAerportoPorIATA(aeroporto->iata, aeroporto, numAeroportos) == id) {
+            return aeroporto->iata;
+        }
+    }
+    return NULL;
 }
