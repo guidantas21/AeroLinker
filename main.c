@@ -96,7 +96,7 @@ int main() {
 
                 tVoo *voo = criarVoo(aeroportoInicial, aeroportoFinal, caminho);
                 
-                printVooInfo(voo);
+                printVooInfo(voo, dadosAeroportos, numAeroportos);
 
                 destruirVoo(voo);
                 break;

@@ -27,4 +27,6 @@ int idAerportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroporto
 
 char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id);
 
+tAeroporto *aeroportPorId(tAeroporto *aeroportos, int numAeroportos, int id);
+
 #endif /* AEROPORTOS_H */

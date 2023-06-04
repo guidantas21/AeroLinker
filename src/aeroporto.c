@@ -100,3 +100,12 @@ char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id) {
     }
     return NULL;
 }
+
+tAeroporto *aeroportPorId(tAeroporto *aeroportos, int numAeroportos, int id) {
+    for (int i = 0; i < numAeroportos; i++) {
+        if (aeroportos[i].id == id) {
+            return &aeroportos[i];
+        }
+    }
+    return NULL;
+}
