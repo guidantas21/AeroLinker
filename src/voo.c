@@ -20,8 +20,8 @@ void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
     printf("Distância: %d km\n", voo->trajeto->menorDistancia);
 
     printf("Trajeto: ");
-    for (int i = 0; i < voo->trajeto->pilha.topo + 1; i++) {
-        aeroporto = aeroportPorId(aeroportos, numAeroportos, voo->trajeto->pilha.items[i]);
+    for (int i = 0; i < voo->trajeto->pilha->topo + 1; i++) {
+        aeroporto = aeroportPorId(aeroportos, numAeroportos, voo->trajeto->pilha->items[i]);
 
         if (aeroporto != NULL) {
             printf("%s", aeroporto->iata);

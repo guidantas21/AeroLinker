@@ -6,7 +6,10 @@
 #ifndef VOO_H
 #define VOO_H
 
+#define VOOS_FILE "dados/aeroportos.csv"
+
 typedef struct  {
+    unsigned int id;
     tAeroporto *aeroportoInicial;
     tAeroporto *aeroportoFinal;
     tCaminho *trajeto;

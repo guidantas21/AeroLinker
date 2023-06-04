@@ -42,6 +42,24 @@ void splashScreen(int duracao) {
     while (time(NULL) - startTime < duracao);
 }
 
+void printMenu() {
+    printf("Menu\n");
+    printf("1. dados dos aeroportos\n");
+    printf("2. dados das conexões\n");
+    printf("3. printar arestas\n");
+    printf("4. mapa da rede aérea\n");
+    printf("5. cadastrar voos\n");
+    printf("6. remover voos\n");
+    printf("0. Sair do programa\n\n");
+}
+
+int inputOpcao() {
+    int opcao;
+    scanf("%d", &opcao);
+
+    return opcao;
+}
+
 void perguntaAeroporto(char iataInicial[], char iataFinal[]) {
     printf ("\nAeroporto Inicial (IATA): "); 
     scanf("%s", iataInicial);
@@ -50,5 +68,5 @@ void perguntaAeroporto(char iataInicial[], char iataFinal[]) {
 }
 
 void cleanCMD() {
-    system(CLEAR_SCREEN_COMMAND);
+    if (CLEAN_CMD) system(CLEAR_SCREEN_COMMAND);
 }

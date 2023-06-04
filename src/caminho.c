@@ -14,14 +14,14 @@ tCaminho *criaCaminho(tGrafo *grafo){
     }
     
     novoCaminho->menorDistancia = 0;
-    novoCaminho->pilha = *criaPilha(grafo);
+    novoCaminho->pilha = criaPilha(grafo);
     
     return novoCaminho;
 }
 
 //liberando memoria alocada para caminho
 void liberarCaminho(tCaminho *caminho) {
-  free(caminho->pilha.items);
+  free(caminho->pilha->items);
   free(caminho);
 }
 
@@ -53,6 +53,7 @@ void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho){
     int precedentes[grafo->numVertices];
     int visitados[grafo->numVertices];
     int vAnalise;
+
     tPilha *tempPilha = criaPilha(grafo);
   
     //calculando o menor caminho do verticie inicial para os demais//
@@ -92,7 +93,7 @@ void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho){
     empilhar(tempPilha, vInicial);
 
     for(int i=tempPilha->topo-1; i>=0; i--){
-        empilhar(&caminho->pilha, tempPilha->items[i]);
+        empilhar(caminho->pilha, tempPilha->items[i]);
     }
 }
 

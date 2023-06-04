@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <ctype.h>
 
 #include "include/aeroporto.h"
 #include "include/conexao.h"
@@ -16,68 +15,63 @@
 #include "include/debug.h"
 #include "include/utils.h"
 
+typedef struct {
+    tAeroporto *aeroportos;
+    unsigned int numAeroportos;
+    tConexao *conexoes;
+    unsigned int numConexoes;
+    tVoo *voos[100];
+    unsigned int numVoos;
+} tDados;
+
 int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SETUP ---------------------------------------------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Variáveis para aramzenar dados dos aeroportos e conexões
-    tAeroporto *dadosAeroportos;
-    unsigned int numAeroportos = 0;
-
-    tConexao *dadosConexoes;
-    unsigned int numConexoes = 0;
-
-    // Verifica arquivos de dados de aeroportos e conexões
+    // Verifica arquivos de dados
     iniciarArquivo(AEROPORTOS_FILE);
     iniciarArquivo(CONEXOES_FILE);
+    iniciarArquivo(VOOS_FILE);
 
-    // Gerar lista de aeroportos e conexões a partir de dados dos arquivos
-    dadosAeroportos = lerDadosAeroportos(&numAeroportos);
-    dadosConexoes = lerDadosConexoes(dadosAeroportos, numAeroportos, &numConexoes);
+    tDados dados = {
+        .numAeroportos = 0,
+        .numConexoes = 0,
+        .numVoos = 0
+    };
+
+    dados.aeroportos = lerDadosAeroportos(&dados.numAeroportos);
+    dados.conexoes = lerDadosConexoes(dados.aeroportos, dados.numAeroportos, &dados.numConexoes);
 
     // Criar grafo vazio
-    tGrafo *aeroportos = criarGrafo(numAeroportos);
+    tGrafo *redeAeroportos = criarGrafo(dados.numAeroportos);
 
     // Passar dados pra o grafo
-    passarConexoesParaGrafo(aeroportos, dadosConexoes, numConexoes, dadosAeroportos, numAeroportos);
+    passarConexoesParaGrafo(redeAeroportos, dados.conexoes, dados.numConexoes, dados.aeroportos, dados.numAeroportos);
 
     cleanCMD();
-    splashScreen(3);
+    splashScreen(TEMPO_SPLASH_SCREEN);
     cleanCMD();
-
-    int opcao;
-    bool rodando = true;
-
-    // int idInicial, idFinal;
-    char iataInicial[4], iataFinal[4];
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // LOOP DA APLICAÇÃO ---------------------------------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    while (rodando) {
-        printf("Menu\n");
-        printf("1. dados dos aeroportos\n");
-        printf("2. dados das conexões\n");
-        printf("3. printar arestas\n");
-        printf("4. mapa da rede aérea\n");
-        printf("5. cadastrar voos\n");
-        printf("6. remover voos\n");
-        printf("0. Sair do programa\n\n");
-        scanf ("%d", &opcao);
+    bool rodando = true;
 
-        switch (opcao){
+    while (rodando) {
+        printMenu();
+        switch (inputOpcao()){
             case 1: // Print tabelas de dados de aeroportos
-                printAeroportos(dadosAeroportos, numAeroportos);
+                printAeroportos(dados.aeroportos, dados.numAeroportos);
                 break;
 
             case 2: // Print tabelas de dados de conexões
-                printConexoes(dadosConexoes, numConexoes);
+                printConexoes(dados.conexoes, dados.numConexoes);
                 break;
 
             case 3: // Print matriz adjacente do grafo
-                printArestas(aeroportos, numAeroportos);
+                printArestas(redeAeroportos, dados.numAeroportos);
                 break;
             
             case 4: // Mostrar mapa da rede aérea no navegador
@@ -85,20 +79,34 @@ int main() {
                 break;
             
             case 5: // Adicionar voos
+                // Input IATA do aeroporto inicial e final
+                char *iataInicial = (char*) malloc(4 * sizeof(char));
+                char *iataFinal = (char*) malloc(4 * sizeof(char));
+
                 perguntaAeroporto(iataInicial, iataFinal);
 
-                tAeroporto *aeroportoInicial = acharAeroportoPorIATA(stringMaiuscula(iataInicial), dadosAeroportos, numAeroportos);
-                tAeroporto *aeroportoFinal = acharAeroportoPorIATA(stringMaiuscula(iataFinal), dadosAeroportos, numAeroportos);
-            
-                tCaminho *caminho = criaCaminho(aeroportos);
+                // Bucar aeroporto inicial e final por IATA
+                tAeroporto *aeroportoInicial = acharAeroportoPorIATA(stringMaiuscula(iataInicial), dados.aeroportos, dados.numAeroportos);
+                tAeroporto *aeroportoFinal = acharAeroportoPorIATA(stringMaiuscula(iataFinal), dados.aeroportos, dados.numAeroportos);
 
-                menorDistancia(aeroportos, aeroportoInicial->id, aeroportoFinal->id, caminho);
+                // Gerar menor trajeto entre aeroporto inicial e final
+                tCaminho *caminho = criaCaminho(redeAeroportos);
+                menorDistancia(redeAeroportos, aeroportoInicial->id, aeroportoFinal->id, caminho);
 
-                tVoo *voo = criarVoo(aeroportoInicial, aeroportoFinal, caminho);
+                // Inseriraeroportos e trajeto na lista voos
+                dados.voos[dados.numVoos] = criarVoo(aeroportoInicial, aeroportoFinal, caminho);
+                dados.numVoos++;
                 
-                printVooInfo(voo, dadosAeroportos, numAeroportos);
+                // (TEMPORÁRIO) print voos da lista de voos
+                for (int i = 0; i < dados.numVoos; i++)
+                    printVooInfo(dados.voos[i], dados.aeroportos, dados.numAeroportos);
 
-                destruirVoo(voo);
+                // Liberar memória
+                free(iataInicial);
+                iataInicial = NULL;
+                free(iataFinal);
+                iataFinal = NULL;
+
                 break;
 
             case 6: // Remover voos
@@ -122,10 +130,12 @@ int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     // Desalocar memória alocada para armazenar dados de coexões e aeroportos
-    destruirConexoes(&dadosConexoes, &numConexoes);
-    destruirAeroportos(&dadosAeroportos, &numAeroportos);
-    // Desalocar memória alocada para armazenar o grafo 
-    liberarGrafo(aeroportos);
+    destruirConexoes(&dados.conexoes, &dados.numConexoes);
+    destruirAeroportos(&dados.aeroportos, &dados.numAeroportos);
+    liberarGrafo(redeAeroportos);
+
+    for (int i = 0; i < dados.numVoos; i++)
+        destruirVoo(dados.voos[i]);
 
     return 0;
 }

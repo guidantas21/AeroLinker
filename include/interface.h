@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
@@ -10,6 +12,9 @@
     #define COMANDO_MAPA_PYTHON "python3 mapas/mapas.py"
     #define CLEAR_SCREEN_COMMAND "clear"
 #endif
+
+#define TEMPO_SPLASH_SCREEN 3
+#define CLEAN_CMD true
 
 void mostrarMapaRedeAerea();
 
@@ -22,5 +27,9 @@ char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id);
 void perguntaAeroporto(char iataInicial[], char iataFinal[]);
 
 void cleanCMD();
+
+void printMenu();
+
+int inputOpcao();
 
 #endif

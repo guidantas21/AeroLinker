@@ -8,7 +8,7 @@
 
 typedef struct{
     int menorDistancia;
-    tPilha pilha;
+    tPilha *pilha;
 } tCaminho;
 
 tCaminho *criaCaminho(tGrafo *grafo);
