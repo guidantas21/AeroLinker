@@ -49,7 +49,7 @@ void printMenu() {
     printf("3. printar arestas\n");
     printf("4. mapa da rede aérea\n");
     printf("5. cadastrar voos\n");
-    printf("6. remover voos\n");
+    printf("6. ver voos\n");
     printf("0. Sair do programa\n\n");
 }
 

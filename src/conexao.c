@@ -84,12 +84,9 @@ void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes) {
 }
 
 void passarConexoesParaGrafo(tGrafo *grafo, tConexao *dadosConexoes, int numConexoes, tAeroporto *dadosAeroportos, int numAeroportos) {
-    int inicio, destino;
     bool check;
     for (int i = 0; i < numConexoes; i++) {
-        inicio = idAerportoPorIATA(dadosConexoes[i].inicial->iata, dadosAeroportos, numAeroportos);
-        destino = idAerportoPorIATA(dadosConexoes[i].final->iata, dadosAeroportos, numAeroportos);
-        check = adicionarAresta(grafo, inicio, destino, dadosConexoes[i].distanciaKm);
+        check = adicionarAresta(grafo, dadosConexoes[i].inicial->id, dadosConexoes[i].final->id, dadosConexoes[i].distanciaKm);
 
         if (DEBUG) {
             if (check) {

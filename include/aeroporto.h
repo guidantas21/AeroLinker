@@ -21,12 +21,8 @@ void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos);
 
-tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos);
+tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned int numAeroportos);
 
-int idAerportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos);
+tAeroporto *acharAeroportoPorId(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int id);
 
-char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id);
-
-tAeroporto *aeroportPorId(tAeroporto *aeroportos, int numAeroportos, int id);
-
-#endif /* AEROPORTOS_H */
+#endif

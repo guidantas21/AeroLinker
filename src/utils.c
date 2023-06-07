@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "../include/debug.h"
+#include "../include/caminho.h"
 
 bool verificarArquivo(FILE *fptr, char endereco[]) {
     if (fptr == NULL) {

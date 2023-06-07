@@ -67,7 +67,7 @@ void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
     *aeroportos = NULL;
 }
 
-tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos) {
+tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned int numAeroportos) {
     for (int i = 0; i < numAeroportos; i++) {
         if (!strcmp(aeroportos[i].iata, iata) ) {
             debugAcharAeroporto(aeroportos[i], iata);
@@ -80,32 +80,9 @@ tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned 
     return NULL;
 }
 
-int idAerportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned numAeroportos) {
-    for (int i = 0; i < numAeroportos; i++) {
-        if (!strcmp(aeroportos[i].iata, iata) ) {
-            debugAcharAeroporto(aeroportos[i], iata);
-            if (DEBUG) printf("ID: %d\n", i);
-            return i;
-        }
-    }
-    if (DEBUG) printf("Aeroporto de IATA '%s' não encontrado\n", iata);
-    return -1;
-}
+tAeroporto *acharAeroportoPorId(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int id) {
+    if (id < numAeroportos) 
+        return &aeroportos[id];
 
-char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id) {
-    for (int i = 0; i < numAeroportos; i++) {
-        if (idAerportoPorIATA(aeroporto->iata, aeroporto, numAeroportos) == id) {
-            return aeroporto->iata;
-        }
-    }
-    return NULL;
-}
-
-tAeroporto *aeroportPorId(tAeroporto *aeroportos, int numAeroportos, int id) {
-    for (int i = 0; i < numAeroportos; i++) {
-        if (aeroportos[i].id == id) {
-            return &aeroportos[i];
-        }
-    }
     return NULL;
 }

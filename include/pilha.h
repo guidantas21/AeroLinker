@@ -9,7 +9,7 @@ typedef struct{
 } tPilha;
 
 // Cria uma nova pilha vazia
-tPilha *criaPilha(tGrafo *grafo);
+tPilha *criaPilha(int tamanho_max);
 
 //adiciona itens a pilha
 void empilhar(tPilha *pilha, int item);

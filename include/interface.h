@@ -14,15 +14,13 @@
 #endif
 
 #define TEMPO_SPLASH_SCREEN 3
-#define CLEAN_CMD true
+#define CLEAN_CMD false
 
 void mostrarMapaRedeAerea();
 
 void print_logo(char endereco[]);
 
 void splashScreen(int duracao);
-
-char *iataPorId(tAeroporto *aeroporto, int numAeroportos, int id);
 
 void perguntaAeroporto(char iataInicial[], char iataFinal[]);
 

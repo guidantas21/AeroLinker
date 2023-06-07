@@ -5,7 +5,7 @@
 
 #include "aeroporto.h"
 
-#define DEBUG false
+#define DEBUG true
 
 void debugAbrirArquivo(char endereco[], char modo[]);
 

@@ -4,11 +4,9 @@
 #include "../include/pilha.h"
 
 // Cria uma nova pilha vazia
-tPilha *criaPilha(tGrafo *grafo){
-    int tamanho_max = grafo->numVertices;
-
-    tPilha *novaPilha = (tPilha*)malloc( sizeof(tPilha));
-    novaPilha->items = (int*)malloc(tamanho_max * sizeof(int));
+tPilha *criaPilha(int tamanho_max){
+    tPilha *novaPilha = (tPilha*) malloc(sizeof(tPilha));
+    novaPilha->items = (int*) malloc(tamanho_max * sizeof(int));
 
     if (novaPilha == NULL) {
         return NULL;
