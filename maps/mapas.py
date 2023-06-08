@@ -53,7 +53,7 @@ class Mapa:
             for linha in leitor_csv:
                 if len(linha) == 3:
                     conexoes = []
-                    distancia, trajeto = linha[:3]
+                    distancia, trajeto = linha[:2]
                     trajeto = trajeto.split("-")
                     for i in range(len(trajeto)-1):
                         inicio = trajeto[i]
