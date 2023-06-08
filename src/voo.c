@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../include/voo.h"
 #include "../include/aeroporto.h"
@@ -11,7 +12,8 @@
 
 tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos) {
     int index = 0, distancia;
-    char linha[256];
+    char trajetoLinha[256];
+    char horarioLinha[20];
 
     debugAbrirArquivo(VOOS_FILE, "r");
 
@@ -26,12 +28,13 @@ tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned
 
     if (voos == NULL) {
         if (DEBUG) printf("Erro ao alocar memória para o vetor de voos\n");
+        fclose(fptr);
         return NULL;
     }       
-    while (fscanf(fptr,"%d,%[^\n]\n", &distancia, linha) == 2) {
+    while (fscanf(fptr,"%d,%[^,],%[^\n]\n", &distancia, trajetoLinha, horarioLinha) == 3) {
         voos[index] = (tVoo*) malloc(sizeof(tVoo));
         
-        voos[index]->trajeto = conveterStringParaTrajeto(linha, aeroportos, numAeroportos);
+        voos[index]->trajeto = conveterStringParaTrajeto(trajetoLinha, aeroportos, numAeroportos);
         voos[index]->trajeto->menorDistancia = distancia;
 
         voos[index]->aeroportoInicial = acharAeroportoPorId(
@@ -45,6 +48,23 @@ tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned
             numAeroportos, 
             voos[index]->trajeto->pilha->items[voos[index]->trajeto->pilha->topo] // Ultimo item da pilha
         );
+
+        struct tm horario;
+
+        if (sscanf(horarioLinha, "%d:%d", &horario.tm_hour, &horario.tm_min) != 2) {
+            printf("Erro ao analisar a string de horário.\n");
+            return NULL;
+        }
+
+        // Definir outros campos da estrutura que não são fornecidos pela string
+        horario.tm_sec = 0;         // Segundos
+        horario.tm_mday = 1;        // Dia do mês (apenas para exemplo)
+        horario.tm_mon = 0;         // Mês (apenas para exemplo)
+        horario.tm_year = 123;      // Ano (apenas para exemplo - 2021 - 1900)
+        horario.tm_isdst = -1;      // Horário de verão (informação desconhecida)
+
+        // Converter a estrutura struct tm para um valor time_t
+        voos[index]->horarioSaida = mktime(&horario);
         index++;
     }
 
@@ -104,9 +124,14 @@ tVoo *criarVoo(tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, tCaminh
 
 void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
     tAeroporto *aeroporto;
+    char horarioString[20];
+
     printf("\nPartida: %s\nDestino: %s\n",  voo->aeroportoInicial->iata, voo->aeroportoFinal->iata);
     printf("Distância: %d km\n", voo->trajeto->menorDistancia);
 
+    strftime(horarioString, sizeof(horarioString), "%H:%M", localtime(&voo->horarioSaida));
+
+    printf("Horário de saída: %s\n", horarioString);
     printf("Trajeto: ");
     for (int i = 0; i < voo->trajeto->pilha->topo + 1; i++) {
         aeroporto = acharAeroportoPorId(aeroportos, numAeroportos, voo->trajeto->pilha->items[i]);
@@ -131,7 +156,6 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
         return;
     }
 
-    printf("%d", voo->trajeto->menorDistancia);
     fprintf(fptr,"%d,", voo->trajeto->menorDistancia);
 
     for (int i = 0; i < voo->trajeto->pilha->topo+1; i++) {
@@ -145,7 +169,13 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
             fprintf(fptr, "-");
     }
 
-    fprintf(fptr,"\n");
+    fprintf(fptr,",");
+
+    char horarioString[20];
+
+    strftime(horarioString, sizeof(horarioString), "%H:%M", localtime(&voo->horarioSaida));
+
+    fprintf(fptr, "%s\n", horarioString);
 
     fclose(fptr);
 }

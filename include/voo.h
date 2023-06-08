@@ -1,5 +1,7 @@
 #pragma once
 
+#include <time.h>
+
 #include "aeroporto.h"
 #include "caminho.h"
 
@@ -14,6 +16,7 @@ typedef struct  {
     tAeroporto *aeroportoInicial;
     tAeroporto *aeroportoFinal;
     tCaminho *trajeto;
+    time_t horarioSaida;
 } tVoo;
 
 tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos);

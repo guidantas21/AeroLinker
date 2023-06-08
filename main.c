@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 #include "include/aeroporto.h"
 #include "include/conexao.h"
@@ -130,10 +131,31 @@ int main() {
                 dados.voos[dados.numVoos-1] = (tVoo*) malloc(sizeof(tVoo));
 
                 dados.voos[dados.numVoos-1]->trajeto = trajeto;
-                
                 dados.voos[dados.numVoos-1]->aeroportoInicial = aeroportoInicial;
-                
                 dados.voos[dados.numVoos-1]->aeroportoFinal = aeroportoFinal;
+
+                time(&dados.voos[dados.numVoos-1]->horarioSaida);
+
+                printf("%ld\n", dados.voos[dados.numVoos-1]->horarioSaida);
+            
+                struct tm horarioSaida;
+
+                printf("Hora: ");
+                scanf("%d", &horarioSaida.tm_hour);
+                printf("Minuto: ");
+                scanf("%d", &horarioSaida.tm_min);
+
+                horarioSaida.tm_sec = 0;       // Segundos
+                horarioSaida.tm_mday = 1;      // Dia do mês (exemplo: 1)
+                horarioSaida.tm_mon = 0;       // Mês (exemplo: janeiro)
+                horarioSaida.tm_year = 13;    // Ano (exemplo: 2021 - 1900)
+                horarioSaida.tm_isdst = -1;    // Horário de verão (informação desconhecida)
+
+                printf("%d %d\n", horarioSaida.tm_hour, horarioSaida.tm_min);
+
+                dados.voos[dados.numVoos-1]->horarioSaida = mktime(&horarioSaida);
+
+                printf("%ld\n", dados.voos[dados.numVoos-1]->horarioSaida);
 
                 salvarVoo(dados.voos[dados.numVoos-1], dados.aeroportos, dados.numAeroportos);
 
