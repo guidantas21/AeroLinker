@@ -13,4 +13,6 @@ unsigned int contarLinhasDeArquivo(FILE *fptr);
 
 char *stringMaiuscula(char* str);
 
+void removerCaracteresInvisiveis(char *string);
+
 #endif

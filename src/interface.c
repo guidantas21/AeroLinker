@@ -6,12 +6,25 @@
 #include "../include/aeroporto.h"
 #include "../include/interface.h"
 
-void mostrarMapaRedeAerea() {
+void mostrarMapa(char *protocolo) {
     if (getenv("WSL_DISTRO_NAME") == NULL) {
-        system(COMANDO_MAPA_PYTHON);
+        char comando[] = COMANDO_MAPA_PYTHON;
+        system(strcat(comando, protocolo));
     } else {
         printf("Está sendo executado no Windows Subsystem for Linux (WSL).\n");
     }
+} 
+
+void mostrarMapaRedeAerea() {
+    mostrarMapa("rede");
+} 
+
+void mostrarMapaVoos() {
+    mostrarMapa("voos");
+} 
+
+void mostrarMapaVoo(char *pk) {
+    mostrarMapa(pk);
 } 
 
 void print_logo(char endereco[]){
@@ -48,8 +61,10 @@ void printMenu() {
     printf("2. dados das conexões\n");
     printf("3. printar arestas\n");
     printf("4. mapa da rede aérea\n");
-    printf("5. cadastrar voos\n");
-    printf("6. ver voos\n");
+    printf("5. mapa de todos os voos\n");
+    printf("6. mapa de voo específico\n");
+    printf("7. cadastrar voos\n");
+    printf("8. ver voos\n");
     printf("0. Sair do programa\n\n");
 }
 

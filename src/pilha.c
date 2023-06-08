@@ -28,3 +28,11 @@ void desempilhar(tPilha *p){
     int item_remov = p->items[p->topo];
     p->topo--;
 }
+
+// destroi pilha
+void destruirPilha(tPilha *p) {
+    free(p->items);
+    p->items = NULL;
+    free(p);
+    p = NULL;
+}

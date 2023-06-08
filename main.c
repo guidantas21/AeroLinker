@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "include/aeroporto.h"
 #include "include/conexao.h"
@@ -20,7 +21,7 @@ typedef struct {
     unsigned int numAeroportos;
     tConexao *conexoes; // Lista de conexoes
     unsigned int numConexoes;
-    tVoo *voos; // Lista de voos
+    tVoo **voos; // Lista de voos
     unsigned int numVoos;
 } tDados;
 
@@ -44,6 +45,7 @@ int main() {
     dados.aeroportos = lerDadosAeroportos(&dados.numAeroportos);
     dados.conexoes = lerDadosConexoes(dados.aeroportos, dados.numAeroportos, &dados.numConexoes);
     dados.voos = lerDadosVoos(dados.aeroportos, dados.numAeroportos, &dados.numVoos);
+    
 
     // Criar grafo vazio
     tGrafo *redeAeroportos = criarGrafo(dados.numAeroportos);
@@ -60,7 +62,7 @@ int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool rodando = true;
-
+    
     while (rodando) {
         printMenu();
         switch (inputOpcao()){
@@ -80,19 +82,24 @@ int main() {
                 mostrarMapaRedeAerea();
                 break;
             
-            case 5: // Adicionar voos
-                char *iataInicial = (char*) malloc(4 * sizeof(char));
+            case 5:
+                mostrarMapaVoos();
+                break;
+            
+            case 6:
+            {
+                char id[2];
+                printf("Id do voo: ");
 
-                if (iataInicial == NULL) {
-                    break;
-                }
+                scanf(" %s", id);
 
-                char *iataFinal = (char*) malloc(4 * sizeof(char));
-
-                if (iataFinal == NULL) {
-                    free(iataInicial);
-                    break;
-                }
+                mostrarMapaVoo(id);
+                break;
+            }
+            case 7: // Adicionar voos
+            {
+                char iataInicial[4];
+                char iataFinal[4];
                 
                 // Input IATA do aeroporto inicial e final
                 perguntaAeroporto(iataInicial, iataFinal);
@@ -110,51 +117,35 @@ int main() {
                     dados.numAeroportos
                 );
 
-                // Liberar memória
-                free(iataInicial);
-                iataInicial = NULL;
-                free(iataFinal);
-                iataFinal = NULL;
-
-                // Gerar menor trajeto entre aeroporto inicial e final
-                tCaminho *trajeto = criaCaminho(redeAeroportos);
                 
+                // Gerar menor trajeto entre aeroporto inicial e final
+                tCaminho *trajeto = criaCaminho(redeAeroportos->numVertices);
+            
                 menorDistancia(redeAeroportos, aeroportoInicial->id, aeroportoFinal->id, trajeto);
-
+                
                 dados.numVoos++;
 
-                dados.voos = realloc(dados.voos, dados.numVoos * sizeof(tVoo));
+                dados.voos = realloc(dados.voos, dados.numVoos * sizeof(tVoo*));
+                
+                dados.voos[dados.numVoos-1] = (tVoo*) malloc(sizeof(tVoo));
 
-                dados.voos[dados.numVoos-1].trajeto = trajeto;
-                dados.voos[dados.numVoos-1].aeroportoInicial = aeroportoInicial;
-                dados.voos[dados.numVoos-1].aeroportoFinal = aeroportoFinal;
+                dados.voos[dados.numVoos-1]->trajeto = trajeto;
+                
+                dados.voos[dados.numVoos-1]->aeroportoInicial = aeroportoInicial;
+                
+                dados.voos[dados.numVoos-1]->aeroportoFinal = aeroportoFinal;
 
-                // Salvando no arquivo
-                FILE *fptr = fopen(VOOS_FILE, "a+");
+                salvarVoo(dados.voos[dados.numVoos-1], dados.aeroportos, dados.numAeroportos);
 
-                fprintf(fptr, "\n%d,", dados.voos[dados.numVoos-1].trajeto->menorDistancia);
-
-                for (int i = 0; i < dados.voos[dados.numVoos-1].trajeto->pilha->topo+1; i++) {
-                    fprintf(fptr, "%s",acharAeroportoPorId(
-                        dados.aeroportos, 
-                        dados.numAeroportos, 
-                        dados.voos[dados.numVoos-1].trajeto->pilha->items[i]
-                    )->iata);
-
-                    if (i < dados.voos[dados.numVoos-1].trajeto->pilha->topo)
-                        fprintf(fptr, "-");
+                break;
+            }
+            case 8: // Printar voos
+            {
+                for (int i = 0; i < dados.numVoos; i++) {
+                    printVooInfo(dados.voos[i], dados.aeroportos, dados.numAeroportos);
                 }
-
-                fclose(fptr);
-
                 break;
-
-            case 6: // Printar voos
-                // (TEMPORÁRIO) print voos da lista de voos
-                for (int i = 0; i < dados.numVoos; i++)
-                    printVooInfo(&dados.voos[i], dados.aeroportos, dados.numAeroportos);
-                break;
-
+            }
             case 0: // Encerrar loop
                 printf("\nEncerrando aplicação\n");
                 rodando = false;
@@ -170,13 +161,16 @@ int main() {
     // LIBERAÇÃO DE MEMÓRIA ------------------------------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    // Desalocar memória alocada para armazenar dados de coexões e aeroportos
+    // Liberar memória alocada para armazenar dados de coexões e aeroportos
     destruirConexoes(&dados.conexoes, &dados.numConexoes);
     destruirAeroportos(&dados.aeroportos, &dados.numAeroportos);
+
+    // Liberar memória do grafo de redes aéreas
     liberarGrafo(redeAeroportos);
 
-    // for (int i = 0; i < dados.numVoos; i++)
-    //     destruirVoo(&dados.voos[i]);
+    // Liberar memória dos voos
+    for (int i = 0; i < dados.numVoos; i++)
+        destruirVoo(dados.voos[i]);
 
     return 0;
 }

@@ -9,7 +9,10 @@
 #include "../include/utils.h"
 #include "../include/pilha.h"
 
-tVoo *lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos) {
+tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos) {
+    int index = 0, distancia;
+    char linha[256];
+
     debugAbrirArquivo(VOOS_FILE, "r");
 
     FILE *fptr = fopen(VOOS_FILE, "r");
@@ -19,30 +22,29 @@ tVoo *lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned 
     // Quantidade de voos listados no arquivo
     *numVoos = contarLinhasDeArquivo(fptr);
 
-    tVoo *voos = (tVoo*) malloc((*numVoos) * sizeof(tVoo));
+    tVoo **voos = (tVoo**) malloc((*numVoos) * sizeof(tVoo*));
 
     if (voos == NULL) {
         if (DEBUG) printf("Erro ao alocar memória para o vetor de voos\n");
         return NULL;
-    }
+    }       
+    while (fscanf(fptr,"%d,%[^\n]\n", &distancia, linha) == 2) {
+        voos[index] = (tVoo*) malloc(sizeof(tVoo));
+        
+        voos[index]->trajeto = conveterStringParaTrajeto(linha, aeroportos, numAeroportos);
+        voos[index]->trajeto->menorDistancia = distancia;
+
+        voos[index]->aeroportoInicial = acharAeroportoPorId(
+            aeroportos, 
+            numAeroportos, 
+            voos[index]->trajeto->pilha->items[0]
+        );
     
-    char *linha;
-    int menorDistancia;
-    int index = 0;
-    while (fscanf(fptr,"%d,%m[^\n]\n", &menorDistancia, &linha) == 2) {
-        voos[index].trajeto = conveterStringParaTrajeto(linha, aeroportos, numAeroportos);
-        voos[index].trajeto->menorDistancia = menorDistancia;
-        voos[index].aeroportoInicial = acharAeroportoPorId(
+        voos[index]->aeroportoFinal = acharAeroportoPorId(
             aeroportos, 
             numAeroportos, 
-            voos[index].trajeto->pilha->items[0]
+            voos[index]->trajeto->pilha->items[voos[index]->trajeto->pilha->topo] // Ultimo item da pilha
         );
-        voos[index].aeroportoFinal = acharAeroportoPorId(
-            aeroportos, 
-            numAeroportos, 
-            voos[index].trajeto->pilha->items[voos[index].trajeto->pilha->topo] // Ultimo item da pilha
-        );
-        free(linha);
         index++;
     }
 
@@ -58,15 +60,13 @@ tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigne
         return NULL;
     }
 
-    int i = 0, cont = 1;
+    int cont = 1;
 
-    for (int i = 0; i < n;  i+=3)
+    for (int i = 0; i < n;  i++) {
         if (linha[i] == '-')
             cont++;
+    }
 
-    printf("%d\n", cont);
-
-    char **tokens = (char**) malloc(cont * sizeof(char*));
     int numTokens = 0;
     char *delimitador = "-";
 
@@ -77,8 +77,7 @@ tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigne
     if (trajeto == NULL) {
         return NULL;
     }
-    
-    trajeto->menorDistancia = 0;
+
     trajeto->pilha = criaPilha(cont);
 
     while (token != NULL && numTokens < cont) {
@@ -94,7 +93,7 @@ tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigne
 
 tVoo *criarVoo(tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, tCaminho *trajeto) {
     tVoo *novoVoo = (tVoo*) malloc(sizeof(tVoo));
-
+    
     novoVoo->aeroportoInicial = aeroportoInicial;
     novoVoo->aeroportoFinal = aeroportoFinal;
 
@@ -124,10 +123,37 @@ void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
     printf("\n\n");
 }
 
+void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
+    FILE *fptr = fopen(VOOS_FILE, "a");
+    
+    if (!verificarArquivo(fptr, VOOS_FILE)) {
+        printf("Nao foi possivel abrir voos\n");
+        return;
+    }
+
+    printf("%d", voo->trajeto->menorDistancia);
+    fprintf(fptr,"%d,", voo->trajeto->menorDistancia);
+
+    for (int i = 0; i < voo->trajeto->pilha->topo+1; i++) {
+        fprintf(fptr, "%s",acharAeroportoPorId(
+            aeroportos, 
+            numAeroportos, 
+            voo->trajeto->pilha->items[i]
+        )->iata);
+
+        if (i < voo->trajeto->pilha->topo)
+            fprintf(fptr, "-");
+    }
+
+    fprintf(fptr,"\n");
+
+    fclose(fptr);
+}
+
 void destruirVoo(tVoo *voo) {
     // Libera a memória do trajeto
     liberarCaminho(voo->trajeto);
 
-    // Libera a memória do struct tVoo
+    // Libera voo
     free(voo);
 }

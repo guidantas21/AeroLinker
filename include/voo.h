@@ -7,6 +7,7 @@
 #define VOO_H
 
 #define VOOS_FILE "dados/voos.csv"
+#define MAX_VOOS 100
 
 typedef struct  {
     unsigned int id;
@@ -15,15 +16,13 @@ typedef struct  {
     tCaminho *trajeto;
 } tVoo;
 
-tVoo *lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos);
-
-tVoo *criarVoo(tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, tCaminho *trajeto);
-
-// void adicionarVoo(tVoo ***voos, unsigned int *numVoos, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, tCaminho *trajeto);
+tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos);
 
 void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos);
 
 tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigned int numAeroportos);
+
+void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void destruirVoo(tVoo *voo);
 

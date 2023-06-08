@@ -17,4 +17,6 @@ void empilhar(tPilha *pilha, int item);
 //remove itens da pilha
 void desempilhar(tPilha *p);
 
+void destruirPilha(tPilha *p);
+
 #endif

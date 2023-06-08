@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #ifndef AEROPORTOS_H
 #define AEROPORTOS_H
 
@@ -20,6 +22,8 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos);
 void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos);
+
+bool compararIata(char iata1[4], char iata2[4]);
 
 tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned int numAeroportos);
 

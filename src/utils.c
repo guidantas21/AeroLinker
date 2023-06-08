@@ -52,3 +52,13 @@ char *stringMaiuscula(char* str) {
     }
     return str;
 }
+
+void removerCaracteresInvisiveis(char *string) {
+    int i, j = 0;
+    for (i = 0; string[i] != '\0'; i++) {
+        if (!iscntrl((unsigned char)string[i])) {
+            string[j++] = string[i];
+        }
+    }
+    string[j] = '\0';
+}

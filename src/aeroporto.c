@@ -67,15 +67,27 @@ void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
     *aeroportos = NULL;
 }
 
-tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned int numAeroportos) {
-    for (int i = 0; i < numAeroportos; i++) {
-        if (!strcmp(aeroportos[i].iata, iata) ) {
-            debugAcharAeroporto(aeroportos[i], iata);
-            return &aeroportos[i];
+bool compararIata(char iata1[4], char iata2[4]) {
+    int n = strlen(iata1);
+
+    for (int i = 0; i < n; i++) {
+        if (iata1[i] != iata2[i]) {
+            return false;
         }
     }
 
-    if (DEBUG) printf("Aeroporto de IATA '%s' não encontrado\n", iata);
+    return true;
+}
+
+tAeroporto *acharAeroportoPorIATA(char iata[], tAeroporto *aeroportos, unsigned int numAeroportos) {
+    for (int i = 0; i < numAeroportos; i++) {
+        if (compararIata(aeroportos[i].iata, iata)) {
+            debugAcharAeroporto(aeroportos[i], iata); 
+            return &aeroportos[i];
+        }
+    }
+    
+    if (DEBUG) printf("\nAeroporto de IATA '%s' não encontrado\n", iata);
 
     return NULL;
 }

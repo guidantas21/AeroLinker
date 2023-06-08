@@ -7,7 +7,7 @@
 #include "../include/pilha.h"
 
 //cria caminho
-tCaminho *criaCaminho(tGrafo *grafo){
+tCaminho *criaCaminho(unsigned int numVertices) {
     tCaminho *novoCaminho = (tCaminho*) malloc(sizeof(tCaminho));
     
     if (novoCaminho == NULL) {
@@ -15,15 +15,16 @@ tCaminho *criaCaminho(tGrafo *grafo){
     }
     
     novoCaminho->menorDistancia = 0;
-    novoCaminho->pilha = criaPilha(grafo->numVertices);
+    novoCaminho->pilha = criaPilha(numVertices);
     
     return novoCaminho;
 }
 
 //liberando memoria alocada para caminho
 void liberarCaminho(tCaminho *caminho) {
-  free(caminho->pilha->items);
+  destruirPilha(caminho->pilha);
   free(caminho);
+  caminho = NULL;
 }
 
 int verificarNumero(int array[], int tamanho, int numero) {
@@ -49,15 +50,16 @@ int encontrarVerticeMinimo(int distancia[], int visitado[], int nVertices) {
 }
 
 void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho){
-    //inicio da declaração de variavel//
-    int estimativas[grafo->numVertices];
-    int precedentes[grafo->numVertices];
-    int visitados[grafo->numVertices];
+    //inicio da declaração de variavel
+    int *estimativas = (int*) malloc(grafo->numVertices * sizeof(int));
+    int *precedentes = (int*) malloc(grafo->numVertices * sizeof(int));
+    int *visitados = (int*) malloc(grafo->numVertices * sizeof(int));
+
     int vAnalise;
 
     tPilha *tempPilha = criaPilha(grafo->numVertices);
   
-    //calculando o menor caminho do verticie inicial para os demais//
+    //calculando o menor caminho do verticie inicial para os demais
     for (int v = 0; v < grafo->numVertices; v++) {
         estimativas[v] = INT_MAX;
         visitados[v] = 0;
@@ -66,7 +68,7 @@ void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho){
     estimativas[vInicial]=0;
     precedentes[vInicial]=0;
 
-    for (int c=0; c < grafo->numVertices - 1; c++) {
+    for (int c = 0; c < grafo->numVertices - 1; c++) {
         int vMin = encontrarVerticeMinimo(estimativas, visitados, grafo->numVertices);
         visitados[vMin] = 1;
 
@@ -86,27 +88,21 @@ void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho){
     empilhar(tempPilha, vFinal);
     vAnalise = vFinal;
 
-    while(vAnalise!=vInicial){
+    while(vAnalise != vInicial){
         empilhar(tempPilha, precedentes[vAnalise]);
-        vAnalise=precedentes[vAnalise];
+        vAnalise = precedentes[vAnalise];
     }
 
     empilhar(tempPilha, vInicial);
 
-    for(int i=tempPilha->topo-1; i>=0; i--){
+    for(int i = tempPilha->topo-1; i >= 0; i--){
         empilhar(caminho->pilha, tempPilha->items[i]);
     }
-}
 
-void calculaDistanciaEntreVertice(tGrafo *grafo, tPilha *pilha, int **vetor){
-    int i, j, v, f;
+    // Liberar arrays auxiliares
+    free(estimativas);
+    free(precedentes);
+    free(visitados);
 
-    int tamanho = pilha->topo - 1;
-    *vetor = (int*)malloc(tamanho * sizeof(int));
-  
-    for (i =0, j =1 ; j<=pilha->topo; i++, j++){
-        v = pilha->items[i];
-        f = pilha->items[j];
-        (*vetor)[i] = grafo->arestas[v][f].distancia;
-    }
+    destruirPilha(tempPilha);
 }

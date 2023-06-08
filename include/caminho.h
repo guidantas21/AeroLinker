@@ -11,15 +11,13 @@ typedef struct{
     tPilha *pilha;
 } tCaminho;
 
-tCaminho *criaCaminho(tGrafo *grafo);
+tCaminho *criaCaminho(unsigned int numVertices);
 
 int verificarNumero(int array[], int tamanho, int numero);
 
 int encontrarVerticeMinimo(int distancia[], int visitado[], int nVertices);
 
 void menorDistancia(tGrafo *grafo, int vInicial, int vFinal, tCaminho *caminho);
-
-void calculaDistanciaEntreVertice(tGrafo *grafo, tPilha *pilha, int **vetor);
 
 void liberarCaminho(tCaminho *caminho);
 
