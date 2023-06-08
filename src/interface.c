@@ -57,14 +57,14 @@ void splashScreen(int duracao) {
 
 void printMenu() {
     printf("Menu\n");
-    printf("1. dados dos aeroportos\n");
-    printf("2. dados das conexões\n");
-    printf("3. printar arestas\n");
-    printf("4. mapa da rede aérea\n");
-    printf("5. mapa de todos os voos\n");
-    printf("6. mapa de voo específico\n");
-    printf("7. cadastrar voos\n");
-    printf("8. ver voos\n");
+    printf("1. Exibir dados dos aeroportos\n");
+    printf("2. Exibir dados das conexões\n");
+    printf("3. Exibir matriz de conexões de aeroportos\n");
+    printf("4. Exibir mapa da rede aérea\n");
+    printf("5. Exibir mapa de todos os voos\n");
+    printf("6. Exibir mapa de voo específico\n");
+    printf("7. Cadastrar voos\n");
+    printf("8. Ver voos cadastrados\n");
     printf("0. Sair do programa\n\n");
 }
 
