@@ -51,9 +51,9 @@ class Mapa:
         with open(dados["voos"], 'r', encoding='utf-8') as arquivo_csv:
             leitor_csv = csv.reader(arquivo_csv, delimiter=',')
             for linha in leitor_csv:
-                if len(linha) == 2:
+                if len(linha) == 3:
                     conexoes = []
-                    distancia, trajeto = linha
+                    distancia, trajeto = linha[:3]
                     trajeto = trajeto.split("-")
                     for i in range(len(trajeto)-1):
                         inicio = trajeto[i]
