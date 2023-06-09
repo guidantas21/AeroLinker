@@ -118,36 +118,29 @@ int main() {
                     dados.numAeroportos
                 );
 
-                
+
                 // Gerar menor trajeto entre aeroporto inicial e final
                 tCaminho *trajeto = criaCaminho(redeAeroportos->numVertices);
             
                 menorDistancia(redeAeroportos, aeroportoInicial->id, aeroportoFinal->id, trajeto);
                 
+                // Abrir espaço na lista de voos
                 dados.numVoos++;
             
                 dados.voos = realloc(dados.voos, dados.numVoos * sizeof(tVoo*));
 
+                // Gerar hórario de saída do voo
+                int hora, minuto, dia, mes, ano;
+
+                printf("Data e hora de saída (dia/mes/ano hora:minuto): ");
+                scanf("%d/%d/%d %d:%d", &dia, &mes, &ano, &hora, &minuto);
+
+                struct tm *horarioSaida = gerarHorario(hora, minuto, dia, mes, ano);
+
+                // Criar o voo, adicionar na lista de voos e salvar no arquivo
                 int ultimoIndex = dados.numVoos-1;
 
-                dados.voos[ultimoIndex] = (tVoo*) malloc(sizeof(tVoo));
-
-                dados.voos[ultimoIndex]->trajeto = trajeto;
-                dados.voos[ultimoIndex]->aeroportoInicial = aeroportoInicial;
-                dados.voos[ultimoIndex]->aeroportoFinal = aeroportoFinal;
-
-                dados.voos[ultimoIndex]->horarioSaida = (struct tm*)malloc(sizeof(struct tm));
-
-                printf("Hora: ");
-                scanf("%d", &dados.voos[ultimoIndex]->horarioSaida->tm_hour);
-                printf("Minuto: ");
-                scanf("%d", &dados.voos[ultimoIndex]->horarioSaida->tm_min);
-
-                dados.voos[ultimoIndex]->horarioSaida->tm_sec = 0;       // Segundos
-                dados.voos[ultimoIndex]->horarioSaida->tm_mday = 1;      // Dia do mês (exemplo: 1)
-                dados.voos[ultimoIndex]->horarioSaida->tm_mon = 0;       // Mês (exemplo: janeiro)
-                dados.voos[ultimoIndex]->horarioSaida->tm_year = 13;    // Ano (exemplo: 2021 - 1900)
-                dados.voos[ultimoIndex]->horarioSaida->tm_isdst = -1;    // Horário de verão (informação desconhecida)
+                dados.voos[ultimoIndex] = criarVoo(trajeto, aeroportoInicial, aeroportoFinal, horarioSaida);
 
                 salvarVoo(dados.voos[ultimoIndex], dados.aeroportos, dados.numAeroportos);
 

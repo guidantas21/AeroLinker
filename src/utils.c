@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 
 #include "../include/debug.h"
 #include "../include/caminho.h"
@@ -91,4 +93,18 @@ void removerLinhaDoAquivo(char endereco[], unsigned int linhaDelete)  {
 
     remove(endereco);
     rename(enderecoTemp, endereco);
+}
+
+struct tm *gerarHorario(int hora,int minuto, int dia, int mes, int ano) {
+    struct tm *horario = (struct tm*) malloc(sizeof(struct tm));
+
+    horario->tm_hour = hora;
+    horario->tm_min = minuto;
+    horario->tm_sec = 0;
+    horario->tm_mday = dia;
+    horario->tm_mon = mes - 1; // Começa em 1
+    horario->tm_year = ano - 1900; // Começa a contar de 1990
+    horario->tm_isdst = -1; 
+
+    return horario;
 }

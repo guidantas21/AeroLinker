@@ -50,18 +50,14 @@ tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned
             voos[index]->trajeto->pilha->items[voos[index]->trajeto->pilha->topo] // Ultimo item da pilha
         );
 
-        if (sscanf(horarioLinha, "%d:%d", &voos[index]->horarioSaida->tm_hour, &voos[index]->horarioSaida->tm_min) != 2) {
+        int hora, minuto, dia, mes, ano;
+
+        if (sscanf(horarioLinha, "%d/%d/%d %d:%d", &dia, &mes, &ano, &hora, &minuto) != 5) {
             printf("Erro ao analisar a string de horário.\n");
             return NULL;
         }
 
-        // Definir outros campos da estrutura que não são fornecidos pela string
-        voos[index]->horarioSaida->tm_sec = 0;
-        voos[index]->horarioSaida->tm_mday = 1;        
-        voos[index]->horarioSaida->tm_mon = 0;         
-        voos[index]->horarioSaida->tm_year = 2023 - 1990; 
-        voos[index]->horarioSaida->tm_isdst = -1;      
-
+        voos[index]->horarioSaida = gerarHorario(hora, minuto, dia, mes, ano);
         index++;
     }
 
@@ -121,32 +117,32 @@ void calcularHorarioChegada(struct tm *horarioChegada, tVoo *voo) {
     *horarioChegada = *localtime(&timestamp);
 }
 
-tVoo *criarVoo(tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, tCaminho *trajeto) {
-    tVoo *novoVoo = (tVoo*) malloc(sizeof(tVoo));
-    
-    novoVoo->aeroportoInicial = aeroportoInicial;
-    novoVoo->aeroportoFinal = aeroportoFinal;
+tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, struct tm *horarioSaida) {
+    tVoo *voo = (tVoo*) malloc(sizeof(tVoo));
 
-    novoVoo->trajeto = trajeto;
+    voo->trajeto = trajeto;
+    voo->aeroportoInicial = aeroportoInicial;
+    voo->aeroportoFinal = aeroportoFinal;
+    voo->horarioSaida = horarioSaida;
 
-    return novoVoo;
+    return voo;
 }
 
 void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
     tAeroporto *aeroporto;
-    char horarioString[20];
+    char horarioString[30];
     struct tm horarioChegada;
 
     printf("\nPartida: %s\nDestino: %s\n",  voo->aeroportoInicial->iata, voo->aeroportoFinal->iata);
     printf("Distância: %d km\n", voo->trajeto->menorDistancia);
 
-    strftime(horarioString, sizeof(horarioString), "%H:%M", voo->horarioSaida);
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", voo->horarioSaida);
 
     printf("Horário de saída: %s\n", horarioString);
 
     calcularHorarioChegada(&horarioChegada, voo);
 
-    strftime(horarioString, sizeof(horarioString), "%H:%M", &horarioChegada);
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", &horarioChegada);
 
     printf("Horário de chegada: %s\n", horarioString);
     
@@ -191,7 +187,7 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
 
     char horarioString[20];
 
-    strftime(horarioString, sizeof(horarioString), "%H:%M", voo->horarioSaida);
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", voo->horarioSaida);
 
     fprintf(fptr, "%s\n", horarioString);
 
@@ -214,12 +210,6 @@ void removerVoo(tVoo **voos, unsigned int *numVoos) {
             }
 
             voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
-
-            // if (voos == NULL) {
-            //     printf("Erro ao realocar memória do veotr de voos\n");
-            //     free(voos);
-            //     return;
-            // }
 
             removerLinhaDoAquivo(VOOS_FILE,id);
 
