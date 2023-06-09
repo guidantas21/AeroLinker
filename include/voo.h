@@ -16,7 +16,7 @@ typedef struct  {
     tAeroporto *aeroportoInicial;
     tAeroporto *aeroportoFinal;
     tCaminho *trajeto;
-    time_t horarioSaida;
+    struct tm *horarioSaida;
 } tVoo;
 
 tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos);
@@ -26,6 +26,8 @@ void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos);
 tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos);
+
+void calcularHorarioChegada(struct tm *horarioChegada, tVoo *voo);
 
 void destruirVoo(tVoo *voo);
 

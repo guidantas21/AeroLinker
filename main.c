@@ -125,39 +125,31 @@ int main() {
                 menorDistancia(redeAeroportos, aeroportoInicial->id, aeroportoFinal->id, trajeto);
                 
                 dados.numVoos++;
-
-                dados.voos = realloc(dados.voos, dados.numVoos * sizeof(tVoo*));
-                
-                dados.voos[dados.numVoos-1] = (tVoo*) malloc(sizeof(tVoo));
-
-                dados.voos[dados.numVoos-1]->trajeto = trajeto;
-                dados.voos[dados.numVoos-1]->aeroportoInicial = aeroportoInicial;
-                dados.voos[dados.numVoos-1]->aeroportoFinal = aeroportoFinal;
-
-                time(&dados.voos[dados.numVoos-1]->horarioSaida);
-
-                printf("%ld\n", dados.voos[dados.numVoos-1]->horarioSaida);
             
-                struct tm horarioSaida;
+                dados.voos = realloc(dados.voos, dados.numVoos * sizeof(tVoo*));
+
+                int ultimoIndex = dados.numVoos-1;
+
+                dados.voos[ultimoIndex] = (tVoo*) malloc(sizeof(tVoo));
+
+                dados.voos[ultimoIndex]->trajeto = trajeto;
+                dados.voos[ultimoIndex]->aeroportoInicial = aeroportoInicial;
+                dados.voos[ultimoIndex]->aeroportoFinal = aeroportoFinal;
+
+                dados.voos[ultimoIndex]->horarioSaida = (struct tm*)malloc(sizeof(struct tm));
 
                 printf("Hora: ");
-                scanf("%d", &horarioSaida.tm_hour);
+                scanf("%d", &dados.voos[ultimoIndex]->horarioSaida->tm_hour);
                 printf("Minuto: ");
-                scanf("%d", &horarioSaida.tm_min);
+                scanf("%d", &dados.voos[ultimoIndex]->horarioSaida->tm_min);
 
-                horarioSaida.tm_sec = 0;       // Segundos
-                horarioSaida.tm_mday = 1;      // Dia do mês (exemplo: 1)
-                horarioSaida.tm_mon = 0;       // Mês (exemplo: janeiro)
-                horarioSaida.tm_year = 13;    // Ano (exemplo: 2021 - 1900)
-                horarioSaida.tm_isdst = -1;    // Horário de verão (informação desconhecida)
+                dados.voos[ultimoIndex]->horarioSaida->tm_sec = 0;       // Segundos
+                dados.voos[ultimoIndex]->horarioSaida->tm_mday = 1;      // Dia do mês (exemplo: 1)
+                dados.voos[ultimoIndex]->horarioSaida->tm_mon = 0;       // Mês (exemplo: janeiro)
+                dados.voos[ultimoIndex]->horarioSaida->tm_year = 13;    // Ano (exemplo: 2021 - 1900)
+                dados.voos[ultimoIndex]->horarioSaida->tm_isdst = -1;    // Horário de verão (informação desconhecida)
 
-                printf("%d %d\n", horarioSaida.tm_hour, horarioSaida.tm_min);
-
-                dados.voos[dados.numVoos-1]->horarioSaida = mktime(&horarioSaida);
-
-                printf("%ld\n", dados.voos[dados.numVoos-1]->horarioSaida);
-
-                salvarVoo(dados.voos[dados.numVoos-1], dados.aeroportos, dados.numAeroportos);
+                salvarVoo(dados.voos[ultimoIndex], dados.aeroportos, dados.numAeroportos);
 
                 break;
             }

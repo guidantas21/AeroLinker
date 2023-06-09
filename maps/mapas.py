@@ -102,6 +102,7 @@ class Mapa:
     def rgbParaHex(rgb):
         return '#%02x%02x%02x' % rgb
 
+
     def marcar_voos(self):
         for i in range(len(self.voos)):
             rgb = (randint(0,255), randint(0,255), 0)
