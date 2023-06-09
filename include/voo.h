@@ -29,6 +29,8 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void calcularHorarioChegada(struct tm *horarioChegada, tVoo *voo);
 
+void removerVoo(tVoo **voos, unsigned int *numVoos);
+
 void destruirVoo(tVoo *voo);
 
 #endif

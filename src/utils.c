@@ -46,19 +46,49 @@ unsigned int contarLinhasDeArquivo(FILE *fptr) {
     return c;
 }
 
-char *stringMaiuscula(char* str) {
+char *stringMaiuscula(char *str) {
     for (int i = 0; i < strlen(str); i++) {
         str[i] = toupper(str[i]);
     }
     return str;
 }
 
-void removerCaracteresInvisiveis(char *string) {
-    int i, j = 0;
-    for (i = 0; string[i] != '\0'; i++) {
-        if (!iscntrl((unsigned char)string[i])) {
-            string[j++] = string[i];
-        }
+void removerLinhaDoAquivo(char endereco[], unsigned int linhaDelete)  {
+    char enderecoTemp[25] = "__temp__.csv";
+    char linha[1024];
+
+    FILE *arquivo = fopen(endereco, "r");
+
+    if (arquivo  == NULL) {
+        printf("Erro ao abrir arquivo\n");
+        return;
     }
-    string[j] = '\0';
+
+    FILE *arquivoTemp = fopen(enderecoTemp, "w");
+
+    if (arquivo  == NULL) {
+        printf("Erro ao abrir arquivo temporário\n");
+        return;
+    }
+
+    unsigned int linhaContador = 0;
+
+    while (true) {
+        fgets(linha, 1024, arquivo);
+        
+        if (feof(arquivo))
+            break;
+        else if (linhaContador != linhaDelete) {
+            
+            fputs(linha,arquivoTemp);
+        }
+
+        linhaContador++;
+    }
+    
+    fclose(arquivo);
+    fclose(arquivoTemp);
+
+    remove(endereco);
+    rename(enderecoTemp, endereco);
 }

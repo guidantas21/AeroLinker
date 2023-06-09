@@ -155,6 +155,11 @@ int main() {
             }
             case 8: // Printar voos
             {
+                removerVoo(dados.voos, &dados.numVoos);
+                break;
+            }
+            case 9: // Printar voos
+            {
                 for (int i = 0; i < dados.numVoos; i++) {
                     printVooInfo(dados.voos[i], dados.aeroportos, dados.numAeroportos);
                 }

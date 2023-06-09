@@ -64,7 +64,8 @@ void printMenu() {
     printf("5. Exibir mapa de todos os voos\n");
     printf("6. Exibir mapa de voo específico\n");
     printf("7. Cadastrar voos\n");
-    printf("8. Ver voos cadastrados\n");
+    printf("8. Remover voos\n");
+    printf("9. Ver voos cadastrados\n");
     printf("0. Sair do programa\n\n");
 }
 

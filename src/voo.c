@@ -56,11 +56,11 @@ tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned
         }
 
         // Definir outros campos da estrutura que não são fornecidos pela string
-        voos[index]->horarioSaida->tm_sec = 0;         // Segundos
-        voos[index]->horarioSaida->tm_mday = 1;        // Dia do mês (apenas para exemplo)
-        voos[index]->horarioSaida->tm_mon = 0;         // Mês (apenas para exemplo)
-        voos[index]->horarioSaida->tm_year = 123;      // Ano (apenas para exemplo - 2021 - 1900)
-        voos[index]->horarioSaida->tm_isdst = -1;      // Horário de verão (informação desconhecida)
+        voos[index]->horarioSaida->tm_sec = 0;
+        voos[index]->horarioSaida->tm_mday = 1;        
+        voos[index]->horarioSaida->tm_mon = 0;         
+        voos[index]->horarioSaida->tm_year = 2023 - 1990; 
+        voos[index]->horarioSaida->tm_isdst = -1;      
 
         index++;
     }
@@ -196,6 +196,37 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
     fprintf(fptr, "%s\n", horarioString);
 
     fclose(fptr);
+}
+
+void removerVoo(tVoo **voos, unsigned int *numVoos) {
+    int id;
+
+    printf("Id: ");
+    scanf(" %d", &id);
+
+    for (int i = 0; i < *numVoos; i++) {
+        if (i == id) {
+            destruirVoo(voos[i]);
+            (*numVoos)--;
+
+            for (int j = i; j < *numVoos; j++)  {
+                voos[j] = voos[j+1];
+            }
+
+            voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
+
+            // if (voos == NULL) {
+            //     printf("Erro ao realocar memória do veotr de voos\n");
+            //     free(voos);
+            //     return;
+            // }
+
+            removerLinhaDoAquivo(VOOS_FILE,id);
+
+            return;
+        }
+    } 
+    printf("Aeroporto  não encontrado!\n");
 }
 
 void destruirVoo(tVoo *voo) {
