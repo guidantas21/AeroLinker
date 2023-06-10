@@ -8,6 +8,7 @@
 #include "include/conexao.h"
 #include "include/caminho.h"
 #include "include/voo.h"
+#include "include/dados.h"
 
 #include "include/grafo.h"
 #include "include/pilha.h"
@@ -16,15 +17,6 @@
 
 #include "include/debug.h"
 #include "include/utils.h"
-
-typedef struct {
-    tAeroporto *aeroportos; // Lista de aeroportos
-    unsigned int numAeroportos;
-    tConexao *conexoes; // Lista de conexoes
-    unsigned int numConexoes;
-    tVoo **voos; // Lista de voos
-    unsigned int numVoos;
-} tDados;
 
 int main() {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,35 +59,20 @@ int main() {
     while (rodando) {
         printMenu();
         switch (inputOpcao()){
-            case 1: // Print tabelas de dados de aeroportos
-                printAeroportos(dados.aeroportos, dados.numAeroportos);
-                break;
-
-            case 2: // Print tabelas de dados de conexões
-                printConexoes(dados.conexoes, dados.numConexoes);
-                break;
-
-            case 3: // Print matriz adjacente do grafo
-                printArestas(redeAeroportos, dados.numAeroportos);
+            case '1': // Print tabelas de dados de aeroportos
+                cleanCMD();
+                exibirDados(dados, redeAeroportos);
                 break;
             
-            case 4: // Mostrar mapa da rede aérea no navegador
-                mostrarMapaRedeAerea();
+            case '2': // Mostrar mapa da rede aérea no navegador
+                cleanCMD();
+                menuMapas();
                 break;
             
-            case 5:
-                mostrarMapaVoos();
-                break;
-            
-            case 6:
+            case '3': // Adicionar voos
             {
-                // char *id = inputIdStr();
-                // mostrarMapaVoo(id);
-                // free(id);
-                break;
-            }
-            case 7: // Adicionar voos
-            {
+                cleanCMD();
+
                 char iataInicial[4];
                 char iataFinal[4];
                 
@@ -145,24 +122,13 @@ int main() {
 
                 break;
             }
-            case 8: // Printar voos
+            case '4':
             {
-                // removerVoo(dados.voos, &dados.numVoos);
-                break;
-            }
-            case 9:
-            {
+                cleanCMD();
                 pesquisarVoo(dados.voos,&dados.numVoos,dados.aeroportos,dados.numAeroportos);
                 break;
             }
-            case 10: // Printar voos
-            {
-                for (int i = 0; i < dados.numVoos; i++) {
-                    printVooInfo(dados.voos[i], dados.aeroportos, dados.numAeroportos);
-                }
-                break;
-            }
-            case 0: // Encerrar loop
+            case '0': // Encerrar loop
                 printf("\nEncerrando aplicação\n");
                 rodando = false;
                 break;
@@ -171,6 +137,7 @@ int main() {
                 printf("\nSelecione uma opção válida\n");
                 break;
         }
+        cleanCMD();
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

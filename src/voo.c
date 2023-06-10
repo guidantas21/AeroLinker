@@ -162,31 +162,6 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
     fclose(fptr);
 }
 
-// void removerVoo(tVoo **voos, unsigned int *numVoos) {
-//     int id;
-
-//     printf("Id: ");
-//     scanf(" %d", &id);
-
-//     for (int i = 0; i < *numVoos; i++) {
-//         if (i == id) {
-//             destruirVoo(voos[i]);
-//             (*numVoos)--;
-
-//             for (int j = i; j < *numVoos; j++)  {
-//                 voos[j] = voos[j+1];
-//             }
-
-//             voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
-
-//             removerLinhaDoAquivo(VOOS_FILE,id);
-
-//             return;
-//         }
-//     } 
-//     printf("Aeroporto  não encontrado!\n");
-// }
-
 void removerVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
     destruirVoo(voos[id]);
     (*numVoos)--;

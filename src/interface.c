@@ -9,6 +9,7 @@
 #include "../include/voo.h"
 #include "../include/interface.h"
 #include "../include/grafo.h"
+#include "../include/dados.h"
 
 void mostrarMapa(char *protocolo) {
     if (getenv("WSL_DISTRO_NAME") == NULL) {
@@ -60,24 +61,19 @@ void splashScreen(int duracao) {
 }
 
 void printMenu() {
-    printf("Menu\n");
-    printf("1. Exibir dados dos aeroportos\n");
-    printf("2. Exibir dados das conexões\n");
-    printf("3. Exibir matriz de conexões de aeroportos\n");
-    printf("4. Exibir mapa da rede aérea\n");
-    printf("5. Exibir mapa de todos os voos\n");
-    printf("6. Exibir mapa de voo específico\n");
-    printf("7. Cadastrar voos\n");
-    printf("8. Remover voos\n");
-    printf("9. Pesquisar voo\n");
-    printf("10. Ver voos cadastrados\n");
-    printf("0. Sair do programa\n\n");
+    printf("\n>>> MENU <<<\n");
+    printf("1. Exibir dados\n");
+    printf("2. Exibir mapas\n");
+    printf("3. Cadastrar voo\n");
+    printf("4. Pesquisar voo\n");
+    printf("0. Sair do programa\n");
 }
 
-int inputOpcao() {
-    int opcao;
-    printf("Selecione uma opção: ");
-    scanf("%d", &opcao);
+char inputOpcao() {
+    char opcao;
+    printf("\n>> Selecione uma opção: ");
+    scanf(" %c", &opcao);
+    printf("\n");
 
     return opcao;
 }
@@ -90,7 +86,7 @@ void perguntaAeroporto(char iataInicial[], char iataFinal[]) {
 }
 
 void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
-    printf("\n- Aeroportos cadastrados:\n");
+    printf("\n>> Aeroportos cadastrados:\n");
     printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t | LATITUDE\t| LONGITUDE    |\n");
     for (int i = 0; i < numAeroportos; i++) {
         printf("| %3s\t| ", aeroportos[i].iata);
@@ -100,18 +96,46 @@ void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
         printf("%-*f | ", 12, aeroportos[i].latitude);
         printf("%-*f |\n", 12, aeroportos[i].longitude);
     }
-    printf("\n");
+    printf("\n\n");
 }
 
 void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
-    printf("\n- Conexões cadastradas:\n");
+    printf("\n>> Conexões cadastradas:\n");
     printf("| INÍCIO |  FIM\t | DISTÂNCIA (KM)  |\n");
     for (int i = 0; i < numConexoes; i++) {
         printf("|  %3s\t ", conexoes[i].inicial->iata);
         printf("|  %3s\t | \t", conexoes[i].final->iata);
         printf("%-*d |\n", 10, conexoes[i].distanciaKm);
     }
-    printf("\n");
+    printf("\n\n");
+}
+
+void printVoos(tVoo **voos, unsigned int numVoos, tAeroporto *aeroportos, unsigned int numAeroportos) {
+    char horarioString[30];
+
+    printf("\n>> Voos cadastrados:\n");
+    printf("|   ID   | \t\tINICIO \t\t | \t\tDESTINO \t |  DISTANCIA  |      DATA E HORA       |  TRAJETO\n");
+    for (int i = 0; i < numVoos; i++) {
+        printf("|  %3d   | ", voos[i]->id);
+        printf("%-*s\t | ", 25, voos[i]->aeroportoInicial->local);
+        printf("%-*s\t | ", 25, voos[i]->aeroportoFinal->local);
+        printf(" %5d km   | ", voos[i]->trajeto->menorDistancia);
+        strftime(horarioString, sizeof(horarioString), " %d/%m/%Y - %H:%M   |", voos[i]->horarioSaida);
+        printf(" %s", horarioString);
+        for (int j = 0; j < voos[i]->trajeto->pilha->topo+1; j++) {
+            printf(" %s ", acharAeroportoPorId(
+                aeroportos, 
+                numAeroportos, 
+                voos[i]->trajeto->pilha->items[j])->iata
+            );
+
+            if (j < voos[i]->trajeto->pilha->topo) {
+                printf(" >> ");
+            }
+        }
+        printf("\n");
+    }
+    printf("\n\n");
 }
 
 void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
@@ -120,13 +144,13 @@ void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
     char horarioString[30];
     struct tm horarioChegada;
 
-    printf("\n\n== Partida ==\n");
+    printf("\n\n<< Partida >>\n");
     printf("Aeroporto: (id: %d) %s - %s\n", voo->aeroportoInicial->id, voo->aeroportoInicial->iata, voo->aeroportoInicial->nome);
     printf("Local: %s, %s\n", voo->aeroportoInicial->local, voo->aeroportoInicial->pais);
     strftime(horarioString, sizeof(horarioString), "%d/%m/%Y as %H:%M", voo->horarioSaida);
     printf("Data e horário da decolagem: %s\n\n", horarioString);
 
-    printf("== Destino ==\n");
+    printf(">> Destino <<\n");
     printf("Aeroporto: (id: %d) %s - %s\n", voo->aeroportoFinal->id, voo->aeroportoFinal->iata, voo->aeroportoFinal->nome);
     printf("Local: %s, %s\n", voo->aeroportoFinal->local, voo->aeroportoFinal->pais);
     calcularHorarioChegada(&horarioChegada, voo);
@@ -152,19 +176,20 @@ void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
 }
 
 void printArestas(tGrafo *grafo, int numVertices) {
-	printf("\n- Distâncias\n");
+	printf("\n>> Matrix de conexões ([inicio][destino] = distância)\n\n");
     for (int i = 0; i < numVertices; i++) {
         for (int j = 0; j < numVertices; j++) {
             printf("%7d ", grafo->arestas[i][j].distancia);
         }
-        printf("\n");
+        printf("\n\n");
     }
+    printf("\n");
 }
 
 void inputData(int *dia, int *mes, int *ano) {
     while (true) {
         printf("Data (dia/mes/ano): ");
-        scanf("%d/%d/%d", dia, mes, ano);
+        scanf(" %d/%d/%d", dia, mes, ano);
 
         if (1 <= *dia && *dia <= 31 && 1 <= *mes && *mes <= 12)
             break;
@@ -177,7 +202,7 @@ void inputData(int *dia, int *mes, int *ano) {
 void inputHorario(int *hora, int* minuto) {
     while (true) {
         printf("Horário (hora:minuto): ");
-        scanf("%d:%d", hora, minuto);
+        scanf(" %d:%d", hora, minuto);
 
         if (0 <= *hora && *hora < 24 && 0 <= *minuto && *minuto < 60)
             break;
@@ -196,14 +221,55 @@ char* inputIdStr() {
     return idStr;
 }
 
-
 unsigned int inputId() {
     unsigned int id;
 
-    printf("Id: ");
+    printf(">> Id: ");
     scanf(" %d", &id);
 
     return id;
+}
+
+void menuMapas() {
+    bool rodando = true;
+
+    while (rodando) {
+        printf(
+            ">> Opções:\n"
+            "1. Mapa da rede aérea\n"
+            "2. Mapa de voos\n"
+            "3. Mapa de voo específico\n"
+            "0. Voltar\n"
+        );
+
+        switch (inputOpcao()) {
+            case '1':
+                mostrarMapaRedeAerea();
+                break;
+            case '2':
+                mostrarMapaVoos();
+                break;   
+            case '3':
+            {
+                char idStr[4];
+
+                printf("Id: ");
+                scanf("%s", idStr);
+
+                mostrarMapaVoo(idStr);
+
+                break;
+            }         
+            case '0':
+                rodando = false;
+                break;
+            
+            default:
+                printf("\nSelecione uma opção válida\n");
+                break;
+        }
+        cleanCMD();
+    }
 }
 
 void menuVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
@@ -211,14 +277,14 @@ void menuVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
 
     while (rodando) {
         printf(
-            "Opções:\n"
+            ">> Opções:\n"
             "1. Ver no mapa\n"
             "2. Remover\n"
             "0. Voltar\n"
         );
 
         switch (inputOpcao()) {
-            case 1:
+            case '1':
             {
                 char idStr[4];
 
@@ -226,14 +292,50 @@ void menuVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
                 mostrarMapaVoo(idStr);
                 break;
             }
-            case 2:
+            case '2':
                 removerVoo(voos, numVoos, id);
                 rodando = false;
                 break;
-            case 0:
+            case '0':
                 rodando = false;
                 break;
         
+            default:
+                printf("\nSelecione uma opção válida\n");
+                break;
+        }
+    }
+}
+
+void exibirDados(tDados dados, tGrafo *redeAeroportos) {
+    bool rodando = true;
+
+    while (rodando) {
+        printf(
+            ">> Opções:\n"
+            "1. Voos\n"
+            "2. Aeroportos\n"
+            "3. Conexões\n"
+            "4. Print matriz de conexões\n"
+            "0. Voltar\n"
+        );
+
+        switch (inputOpcao()) {
+            case '1':
+                printVoos(dados.voos, dados.numVoos, dados.aeroportos, dados.numAeroportos);
+                break;
+            case '2':
+                printAeroportos(dados.aeroportos, dados.numAeroportos);
+                break;
+            case '3':
+                printConexoes(dados.conexoes, dados.numConexoes);
+                break;
+            case '4':
+                printArestas(redeAeroportos, redeAeroportos->numVertices);
+                break;
+            case '0':
+                rodando = false;
+                break;
             default:
                 printf("\nSelecione uma opção válida\n");
                 break;
@@ -246,13 +348,13 @@ void pesquisarVoo(tVoo **voos, unsigned int *numVoos, tAeroporto *aeroportos, un
 
     while (rodando) {
         printf(
-            "Pesquisar voo por:\n"
+            ">> Pesquisar voo por:\n"
             "1. Id\n"
             "0. Voltar\n"
         );
 
         switch (inputOpcao()) {
-            case 1:
+            case '1':
             {
                 unsigned int id = inputId();
 
@@ -263,7 +365,7 @@ void pesquisarVoo(tVoo **voos, unsigned int *numVoos, tAeroporto *aeroportos, un
                 menuVoo(voos, numVoos, id);
                 break;
             }
-            case 0:
+            case '0':
                 rodando = false;
                 break;
         

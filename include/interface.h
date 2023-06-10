@@ -7,6 +7,7 @@
 #include "../include/caminho.h"
 #include "../include/voo.h"
 #include "../include/grafo.h"
+#include "../include/dados.h"
 
 #ifndef INTERFACE_H
 #define INTERFACE_H
@@ -20,7 +21,7 @@
 #endif
 
 #define TEMPO_SPLASH_SCREEN 3
-#define CLEAN_CMD false
+#define CLEAN_CMD true
 
 void mostrarMapa(char *protcolo);
 
@@ -29,6 +30,10 @@ void mostrarMapaRedeAerea();
 void mostrarMapaVoos();
 
 void mostrarMapaVoo(char *pk);
+
+void menuMapas();
+
+void printVoos(tVoo **voos, unsigned int numVoos, tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void print_logo(char endereco[]);
 
@@ -52,6 +57,8 @@ void menuVoo(tVoo **voos, unsigned int *numVoos, unsigned int id);
 
 void pesquisarVoo(tVoo **voos, unsigned int *numVoos, tAeroporto *aeroportos, unsigned int numAeroportos);
 
+void exibirDados(tDados dados, tGrafo *redeAeroportos);
+
 char *inputIdStr();
 
 unsigned int inputId();
@@ -60,6 +67,6 @@ void cleanCMD();
 
 void printMenu();
 
-int inputOpcao();
+char inputOpcao();
 
 #endif
