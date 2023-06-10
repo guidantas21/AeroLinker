@@ -43,8 +43,6 @@ unsigned int contarLinhasDeArquivo(FILE *fptr) {
     // Volta ao início do arquivo
     fseek(fptr, 0, SEEK_SET);
 
-    if (DEBUG) printf("O arquivo possui %d linhas\n", c);
-
     return c;
 }
 

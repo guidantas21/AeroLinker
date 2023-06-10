@@ -166,8 +166,10 @@ void removerVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
     destruirVoo(voos[id]);
     (*numVoos)--;
 
-    for (int j = id; j < *numVoos; j++) 
+    for (int j = id; j < *numVoos; j++) {
         voos[j] = voos[j+1];
+        voos[j]->id = j;
+    }
 
     voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
 

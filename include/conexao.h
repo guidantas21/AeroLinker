@@ -18,6 +18,7 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
 
 void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes);
 
-void passarConexoesParaGrafo(tGrafo *grafo, tConexao *dadosConexoes, int numConexoes, tAeroporto *dadosAeroportos, int numAeroportos);
+void passarConexoesParaGrafo(tGrafo *grafo, tConexao *dadosConexoes, int numConexoes, 
+    tAeroporto *dadosAeroportos, int numAeroportos);
 
 #endif

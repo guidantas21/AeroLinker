@@ -64,8 +64,6 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     return conexoes;
 }
 
-
-
 void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes) {
     if (DEBUG) printf("Liberando memória alocada do vetor de conexões\n");
 
