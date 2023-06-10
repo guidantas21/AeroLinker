@@ -128,40 +128,6 @@ tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aero
     return voo;
 }
 
-void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
-    tAeroporto *aeroporto;
-    char horarioString[30];
-    struct tm horarioChegada;
-
-    printf("\nPartida: %s\nDestino: %s\n",  voo->aeroportoInicial->iata, voo->aeroportoFinal->iata);
-    printf("Distância: %d km\n", voo->trajeto->menorDistancia);
-
-    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", voo->horarioSaida);
-
-    printf("Horário de saída: %s\n", horarioString);
-
-    calcularHorarioChegada(&horarioChegada, voo);
-
-    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", &horarioChegada);
-
-    printf("Horário de chegada: %s\n", horarioString);
-    
-    printf("Trajeto: ");
-    for (int i = 0; i < voo->trajeto->pilha->topo + 1; i++) {
-        aeroporto = acharAeroportoPorId(aeroportos, numAeroportos, voo->trajeto->pilha->items[i]);
-
-        if (aeroporto != NULL) {
-            printf("%s", aeroporto->iata);
-            if (aeroporto->id != voo->aeroportoFinal->id) {
-                printf(" >> ");
-            }
-        } else {
-            printf("Aerporto não encontrado.\n");
-        }
-    }
-    printf("\n\n");
-}
-
 void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
     FILE *fptr = fopen(VOOS_FILE, "a");
     

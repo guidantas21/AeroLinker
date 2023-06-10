@@ -2,6 +2,12 @@
 
 #include <stdbool.h>
 
+#include "../include/aeroporto.h"
+#include "../include/conexao.h"
+#include "../include/caminho.h"
+#include "../include/voo.h"
+#include "../include/grafo.h"
+
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
@@ -29,6 +35,14 @@ void print_logo(char endereco[]);
 void splashScreen(int duracao);
 
 void perguntaAeroporto(char iataInicial[], char iataFinal[]);
+
+void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos);
+
+void printConexoes(tConexao *conexoes, unsigned int numConexoes);
+
+void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos);
+
+void printArestas(tGrafo *grafo, int numVertices);
 
 void cleanCMD();
 

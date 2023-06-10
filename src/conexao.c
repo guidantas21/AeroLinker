@@ -64,16 +64,7 @@ tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, u
     return conexoes;
 }
 
-void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
-    printf("\n- Conexões cadastradas:\n");
-    printf("| INÍCIO |  FIM\t | DISTÂNCIA (KM)  |\n");
-    for (int i = 0; i < numConexoes; i++) {
-        printf("|  %3s\t ", conexoes[i].inicial->iata);
-        printf("|  %3s\t | \t", conexoes[i].final->iata);
-        printf("%-*d |\n", 10, conexoes[i].distanciaKm);
-    }
-    printf("\n");
-}
+
 
 void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes) {
     if (DEBUG) printf("Liberando memória alocada do vetor de conexões\n");

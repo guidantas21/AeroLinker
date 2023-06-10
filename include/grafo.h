@@ -25,6 +25,4 @@ bool adicionarAresta(tGrafo *grafo, int verticeOrigem, int verticeDestino, int d
 // Remove uma aresta do grafo
 bool removerAresta(tGrafo *grafo, int verticeOrigem, int verticeDestino);
 
-void printArestas(tGrafo *grafo, int numVertices);
-
 #endif

@@ -19,8 +19,6 @@ typedef struct {
 
 tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos);
 
-void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos);
-
 void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos);
 
 bool compararIata(char iata1[4], char iata2[4]);

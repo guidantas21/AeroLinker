@@ -114,13 +114,3 @@ bool removerAresta(tGrafo *grafo, int verticeOrigem, int verticeDestino) {
 
     return true;
 }
-
-void printArestas(tGrafo *grafo, int numVertices) {
-	printf("\n- Distâncias\n");
-    for (int i = 0; i < numVertices; i++) {
-        for (int j = 0; j < numVertices; j++) {
-            printf("%7d ", grafo->arestas[i][j].distancia);
-        }
-        printf("\n");
-    }
-}

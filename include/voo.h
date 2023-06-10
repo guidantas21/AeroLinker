@@ -21,8 +21,6 @@ typedef struct  {
 
 tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numVoos);
 
-void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos);
-
 tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigned int numAeroportos);
 
 tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, struct tm *horarioSaida);

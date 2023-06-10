@@ -43,21 +43,6 @@ tAeroporto *lerDadosAeroportos(unsigned int *numAeroportos) {
     return aeroportos;
 }
 
-void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
-    printf("\n- Aeroportos cadastrados:\n");
-    printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t\t | LATITUDE\t| LONGITUDE    |\n");
-    for (int i = 0; i < numAeroportos; i++) {
-        printf("| %3d\t| ", aeroportos[i].id);
-        printf("| %3s\t| ", aeroportos[i].iata);
-        printf("%-*s\t | ",  25, aeroportos[i].nome);
-        printf("%-*s\t | ", 25, aeroportos[i].local);
-        printf("%-*s\t | ", 25, aeroportos[i].pais);
-        printf("%-*f | ", 12, aeroportos[i].latitude);
-        printf("%-*f |\n", 12, aeroportos[i].longitude);
-    }
-    printf("\n");
-}
-
 void destruirAeroportos(tAeroporto **aeroportos, unsigned int *numAeroportos) {
     if (DEBUG) printf("Liberando memória alocada do vetor de aeroportos\n");
 

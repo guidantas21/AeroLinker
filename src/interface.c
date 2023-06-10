@@ -4,7 +4,11 @@
 #include <string.h>
 
 #include "../include/aeroporto.h"
+#include "../include/conexao.h"
+#include "../include/caminho.h"
+#include "../include/voo.h"
 #include "../include/interface.h"
+#include "../include/grafo.h"
 
 void mostrarMapa(char *protocolo) {
     if (getenv("WSL_DISTRO_NAME") == NULL) {
@@ -81,6 +85,76 @@ void perguntaAeroporto(char iataInicial[], char iataFinal[]) {
     scanf("%s", iataInicial);
     printf ("Aeroporto Final (IATA): "); 
     scanf("%s", iataFinal);
+}
+
+void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
+    printf("\n- Aeroportos cadastrados:\n");
+    printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t\t | LATITUDE\t| LONGITUDE    |\n");
+    for (int i = 0; i < numAeroportos; i++) {
+        printf("| %3d\t| ", aeroportos[i].id);
+        printf("| %3s\t| ", aeroportos[i].iata);
+        printf("%-*s\t | ",  25, aeroportos[i].nome);
+        printf("%-*s\t | ", 25, aeroportos[i].local);
+        printf("%-*s\t | ", 25, aeroportos[i].pais);
+        printf("%-*f | ", 12, aeroportos[i].latitude);
+        printf("%-*f |\n", 12, aeroportos[i].longitude);
+    }
+    printf("\n");
+}
+
+void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
+    printf("\n- Conexões cadastradas:\n");
+    printf("| INÍCIO |  FIM\t | DISTÂNCIA (KM)  |\n");
+    for (int i = 0; i < numConexoes; i++) {
+        printf("|  %3s\t ", conexoes[i].inicial->iata);
+        printf("|  %3s\t | \t", conexoes[i].final->iata);
+        printf("%-*d |\n", 10, conexoes[i].distanciaKm);
+    }
+    printf("\n");
+}
+
+void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
+    tAeroporto *aeroporto;
+    char horarioString[30];
+    struct tm horarioChegada;
+
+    printf("\nPartida: %s\nDestino: %s\n",  voo->aeroportoInicial->iata, voo->aeroportoFinal->iata);
+    printf("Distância: %d km\n", voo->trajeto->menorDistancia);
+
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", voo->horarioSaida);
+
+    printf("Horário de saída: %s\n", horarioString);
+
+    calcularHorarioChegada(&horarioChegada, voo);
+
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", &horarioChegada);
+
+    printf("Horário de chegada: %s\n", horarioString);
+    
+    printf("Trajeto: ");
+    for (int i = 0; i < voo->trajeto->pilha->topo + 1; i++) {
+        aeroporto = acharAeroportoPorId(aeroportos, numAeroportos, voo->trajeto->pilha->items[i]);
+
+        if (aeroporto != NULL) {
+            printf("%s", aeroporto->iata);
+            if (aeroporto->id != voo->aeroportoFinal->id) {
+                printf(" >> ");
+            }
+        } else {
+            printf("Aerporto não encontrado.\n");
+        }
+    }
+    printf("\n\n");
+}
+
+void printArestas(tGrafo *grafo, int numVertices) {
+	printf("\n- Distâncias\n");
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            printf("%7d ", grafo->arestas[i][j].distancia);
+        }
+        printf("\n");
+    }
 }
 
 void cleanCMD() {

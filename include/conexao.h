@@ -16,8 +16,6 @@ typedef struct {
 
 tConexao *lerDadosConexoes(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned int *numConexoes);
 
-void printConexoes(tConexao *conexoes, unsigned int numConexoes);
-
 void destruirConexoes(tConexao **conexoes, unsigned int *numConexoes);
 
 void passarConexoesParaGrafo(tGrafo *grafo, tConexao *dadosConexoes, int numConexoes, tAeroporto *dadosAeroportos, int numAeroportos);
