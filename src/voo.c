@@ -58,6 +58,7 @@ tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned
         }
 
         voos[index]->horarioSaida = gerarHorario(hora, minuto, dia, mes, ano);
+        voos[index]->id = index;
         index++;
     }
 
@@ -117,13 +118,14 @@ void calcularHorarioChegada(struct tm *horarioChegada, tVoo *voo) {
     *horarioChegada = *localtime(&timestamp);
 }
 
-tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, struct tm *horarioSaida) {
+tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, struct tm *horarioSaida, unsigned int id) {
     tVoo *voo = (tVoo*) malloc(sizeof(tVoo));
 
     voo->trajeto = trajeto;
     voo->aeroportoInicial = aeroportoInicial;
     voo->aeroportoFinal = aeroportoFinal;
     voo->horarioSaida = horarioSaida;
+    voo->id = id;
 
     return voo;
 }
@@ -160,29 +162,48 @@ void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos) {
     fclose(fptr);
 }
 
-void removerVoo(tVoo **voos, unsigned int *numVoos) {
-    int id;
+// void removerVoo(tVoo **voos, unsigned int *numVoos) {
+//     int id;
 
-    printf("Id: ");
-    scanf(" %d", &id);
+//     printf("Id: ");
+//     scanf(" %d", &id);
 
-    for (int i = 0; i < *numVoos; i++) {
-        if (i == id) {
-            destruirVoo(voos[i]);
-            (*numVoos)--;
+//     for (int i = 0; i < *numVoos; i++) {
+//         if (i == id) {
+//             destruirVoo(voos[i]);
+//             (*numVoos)--;
 
-            for (int j = i; j < *numVoos; j++)  {
-                voos[j] = voos[j+1];
-            }
+//             for (int j = i; j < *numVoos; j++)  {
+//                 voos[j] = voos[j+1];
+//             }
 
-            voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
+//             voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
 
-            removerLinhaDoAquivo(VOOS_FILE,id);
+//             removerLinhaDoAquivo(VOOS_FILE,id);
 
-            return;
-        }
-    } 
-    printf("Aeroporto  não encontrado!\n");
+//             return;
+//         }
+//     } 
+//     printf("Aeroporto  não encontrado!\n");
+// }
+
+void removerVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
+    destruirVoo(voos[id]);
+    (*numVoos)--;
+
+    for (int j = id; j < *numVoos; j++) 
+        voos[j] = voos[j+1];
+
+    voos = realloc(voos, (*numVoos) * sizeof(tVoo*));
+
+    removerLinhaDoAquivo(VOOS_FILE,id);
+}
+
+tVoo *acharVooPorId(tVoo **voos, unsigned int numVoos, unsigned int id) {
+    if (id < numVoos) 
+        return voos[id];
+
+    return NULL;
 }
 
 void destruirVoo(tVoo *voo) {

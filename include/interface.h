@@ -44,6 +44,18 @@ void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos);
 
 void printArestas(tGrafo *grafo, int numVertices);
 
+void inputData(int *dia, int *mes, int *ano);
+
+void inputHorario( int *hora, int* minuto);
+
+void menuVoo(tVoo **voos, unsigned int *numVoos, unsigned int id);
+
+void pesquisarVoo(tVoo **voos, unsigned int *numVoos, tAeroporto *aeroportos, unsigned int numAeroportos);
+
+char *inputIdStr();
+
+unsigned int inputId();
+
 void cleanCMD();
 
 void printMenu();

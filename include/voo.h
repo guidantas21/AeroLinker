@@ -23,13 +23,15 @@ tVoo **lerDadosVoos(tAeroporto *aeroportos, unsigned int numAeroportos, unsigned
 
 tCaminho *conveterStringParaTrajeto(char *linha, tAeroporto *aeroportos, unsigned int numAeroportos);
 
-tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, struct tm *horarioSaida);
+tVoo *criarVoo(tCaminho *trajeto, tAeroporto *aeroportoInicial, tAeroporto *aeroportoFinal, struct tm *horarioSaida, unsigned int id);
 
 void salvarVoo(tVoo *voo, tAeroporto *aeroportos, unsigned int numAeroportos);
 
 void calcularHorarioChegada(struct tm *horarioChegada, tVoo *voo);
 
-void removerVoo(tVoo **voos, unsigned int *numVoos);
+void removerVoo(tVoo **voos, unsigned int *numVoos, unsigned int id);
+
+tVoo *acharVooPorId(tVoo **voos, unsigned int numVoos, unsigned int id);
 
 void destruirVoo(tVoo *voo);
 

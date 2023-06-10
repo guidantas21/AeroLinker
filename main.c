@@ -89,12 +89,9 @@ int main() {
             
             case 6:
             {
-                char id[2];
-                printf("Id do voo: ");
-
-                scanf(" %s", id);
-
-                mostrarMapaVoo(id);
+                // char *id = inputIdStr();
+                // mostrarMapaVoo(id);
+                // free(id);
                 break;
             }
             case 7: // Adicionar voos
@@ -129,18 +126,20 @@ int main() {
             
                 dados.voos = realloc(dados.voos, dados.numVoos * sizeof(tVoo*));
 
+
                 // Gerar hórario de saída do voo
                 int hora, minuto, dia, mes, ano;
 
-                printf("Data e hora de saída (dia/mes/ano hora:minuto): ");
-                scanf("%d/%d/%d %d:%d", &dia, &mes, &ano, &hora, &minuto);
+                inputData(&dia, &mes, &ano);
+                inputHorario(&hora, &minuto);
 
                 struct tm *horarioSaida = gerarHorario(hora, minuto, dia, mes, ano);
+                
 
                 // Criar o voo, adicionar na lista de voos e salvar no arquivo
                 int ultimoIndex = dados.numVoos-1;
 
-                dados.voos[ultimoIndex] = criarVoo(trajeto, aeroportoInicial, aeroportoFinal, horarioSaida);
+                dados.voos[ultimoIndex] = criarVoo(trajeto, aeroportoInicial, aeroportoFinal, horarioSaida, ultimoIndex);
 
                 salvarVoo(dados.voos[ultimoIndex], dados.aeroportos, dados.numAeroportos);
 
@@ -148,10 +147,15 @@ int main() {
             }
             case 8: // Printar voos
             {
-                removerVoo(dados.voos, &dados.numVoos);
+                // removerVoo(dados.voos, &dados.numVoos);
                 break;
             }
-            case 9: // Printar voos
+            case 9:
+            {
+                pesquisarVoo(dados.voos,&dados.numVoos,dados.aeroportos,dados.numAeroportos);
+                break;
+            }
+            case 10: // Printar voos
             {
                 for (int i = 0; i < dados.numVoos; i++) {
                     printVooInfo(dados.voos[i], dados.aeroportos, dados.numAeroportos);

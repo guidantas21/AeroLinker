@@ -69,12 +69,14 @@ void printMenu() {
     printf("6. Exibir mapa de voo específico\n");
     printf("7. Cadastrar voos\n");
     printf("8. Remover voos\n");
-    printf("9. Ver voos cadastrados\n");
+    printf("9. Pesquisar voo\n");
+    printf("10. Ver voos cadastrados\n");
     printf("0. Sair do programa\n\n");
 }
 
 int inputOpcao() {
     int opcao;
+    printf("Selecione uma opção: ");
     scanf("%d", &opcao);
 
     return opcao;
@@ -89,9 +91,8 @@ void perguntaAeroporto(char iataInicial[], char iataFinal[]) {
 
 void printAeroportos(tAeroporto *aeroportos, unsigned int numAeroportos) {
     printf("\n- Aeroportos cadastrados:\n");
-    printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t\t | LATITUDE\t| LONGITUDE    |\n");
+    printf("| IATA  | AEROPORTO\t\t\t | LOCAL\t\t\t | PAÍS\t\t\t | LATITUDE\t| LONGITUDE    |\n");
     for (int i = 0; i < numAeroportos; i++) {
-        printf("| %3d\t| ", aeroportos[i].id);
         printf("| %3s\t| ", aeroportos[i].iata);
         printf("%-*s\t | ",  25, aeroportos[i].nome);
         printf("%-*s\t | ", 25, aeroportos[i].local);
@@ -115,30 +116,33 @@ void printConexoes(tConexao *conexoes, unsigned int numConexoes) {
 
 void printVooInfo(tVoo *voo, tAeroporto *aeroportos, int numAeroportos) {
     tAeroporto *aeroporto;
+
     char horarioString[30];
     struct tm horarioChegada;
 
-    printf("\nPartida: %s\nDestino: %s\n",  voo->aeroportoInicial->iata, voo->aeroportoFinal->iata);
-    printf("Distância: %d km\n", voo->trajeto->menorDistancia);
+    printf("\n\n== Partida ==\n");
+    printf("Aeroporto: (id: %d) %s - %s\n", voo->aeroportoInicial->id, voo->aeroportoInicial->iata, voo->aeroportoInicial->nome);
+    printf("Local: %s, %s\n", voo->aeroportoInicial->local, voo->aeroportoInicial->pais);
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y as %H:%M", voo->horarioSaida);
+    printf("Data e horário da decolagem: %s\n\n", horarioString);
 
-    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", voo->horarioSaida);
-
-    printf("Horário de saída: %s\n", horarioString);
-
+    printf("== Destino ==\n");
+    printf("Aeroporto: (id: %d) %s - %s\n", voo->aeroportoFinal->id, voo->aeroportoFinal->iata, voo->aeroportoFinal->nome);
+    printf("Local: %s, %s\n", voo->aeroportoFinal->local, voo->aeroportoFinal->pais);
     calcularHorarioChegada(&horarioChegada, voo);
+    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y as %H:%M", &horarioChegada);
+    printf("Data e horário de chegada: %s\n\n", horarioString);
 
-    strftime(horarioString, sizeof(horarioString), "%d/%m/%Y %H:%M", &horarioChegada);
-
-    printf("Horário de chegada: %s\n", horarioString);
-    
+    printf("== Trajeto ==\n");
+    printf("Distância: %d km\n", voo->trajeto->menorDistancia);
     printf("Trajeto: ");
     for (int i = 0; i < voo->trajeto->pilha->topo + 1; i++) {
         aeroporto = acharAeroportoPorId(aeroportos, numAeroportos, voo->trajeto->pilha->items[i]);
 
         if (aeroporto != NULL) {
-            printf("%s", aeroporto->iata);
+            printf("%s (%s)", aeroporto->local, aeroporto->iata);
             if (aeroporto->id != voo->aeroportoFinal->id) {
-                printf(" >> ");
+                printf(" >>> ");
             }
         } else {
             printf("Aerporto não encontrado.\n");
@@ -154,6 +158,119 @@ void printArestas(tGrafo *grafo, int numVertices) {
             printf("%7d ", grafo->arestas[i][j].distancia);
         }
         printf("\n");
+    }
+}
+
+void inputData(int *dia, int *mes, int *ano) {
+    while (true) {
+        printf("Data (dia/mes/ano): ");
+        scanf("%d/%d/%d", dia, mes, ano);
+
+        if (1 <= *dia && *dia <= 31 && 1 <= *mes && *mes <= 12)
+            break;
+        else {
+            printf("Data inválida! Tente novamente.\n");
+        }
+    }
+}
+
+void inputHorario(int *hora, int* minuto) {
+    while (true) {
+        printf("Horário (hora:minuto): ");
+        scanf("%d:%d", hora, minuto);
+
+        if (0 <= *hora && *hora < 24 && 0 <= *minuto && *minuto < 60)
+            break;
+        else {
+            printf("Horário inválido! Tente novamente.\n");
+        }
+    }
+}
+
+char* inputIdStr() {
+    char* idStr = malloc(4 * sizeof(char));
+    unsigned int id = inputId();
+
+    snprintf(idStr, sizeof(idStr ), "%d", id);
+
+    return idStr;
+}
+
+
+unsigned int inputId() {
+    unsigned int id;
+
+    printf("Id: ");
+    scanf(" %d", &id);
+
+    return id;
+}
+
+void menuVoo(tVoo **voos, unsigned int *numVoos, unsigned int id) {
+    bool rodando = true;
+
+    while (rodando) {
+        printf(
+            "Opções:\n"
+            "1. Ver no mapa\n"
+            "2. Remover\n"
+            "0. Voltar\n"
+        );
+
+        switch (inputOpcao()) {
+            case 1:
+            {
+                char idStr[4];
+
+                snprintf(idStr, sizeof(idStr), "%d", id);
+                mostrarMapaVoo(idStr);
+                break;
+            }
+            case 2:
+                removerVoo(voos, numVoos, id);
+                rodando = false;
+                break;
+            case 0:
+                rodando = false;
+                break;
+        
+            default:
+                printf("\nSelecione uma opção válida\n");
+                break;
+        }
+    }
+}
+
+void pesquisarVoo(tVoo **voos, unsigned int *numVoos, tAeroporto *aeroportos, unsigned int numAeroportos) {
+    bool rodando = true;
+
+    while (rodando) {
+        printf(
+            "Pesquisar voo por:\n"
+            "1. Id\n"
+            "0. Voltar\n"
+        );
+
+        switch (inputOpcao()) {
+            case 1:
+            {
+                unsigned int id = inputId();
+
+                tVoo *voo = acharVooPorId(voos, *numVoos, id);
+
+                printVooInfo(voo, aeroportos, numAeroportos);
+
+                menuVoo(voos, numVoos, id);
+                break;
+            }
+            case 0:
+                rodando = false;
+                break;
+        
+            default:
+                printf("\nSelecione uma opção válida\n");
+                break;
+        }
     }
 }
 
